@@ -1,0 +1,25 @@
+{
+    "total_audit_records": 6000,
+    "final_action_counts": {
+        "ALLOW": 4297,
+        "BLOCK": 768,
+        "LOCK": 473,
+        "WARN": 462
+    },
+    "severity_counts": {
+        "LOW": 4297,
+        "CRITICAL": 473,
+        "HIGH": 768,
+        "MEDIUM": 462
+    },
+    "decision_source_counts": {
+        "RULE_ENGINE_MONITORED": 1079,
+        "ML_AND_RULE_ENGINE": 1118,
+        "RULE_ENGINE": 325,
+        "ML_ENGINE": 246,
+        "NO_RISK_ENGINE_TRIGGERED": 3232
+    },
+    "blocked_or_locked_transactions": 1241,
+    "warned_transactions": 462,
+    "allowed_transactions": 4297
+}

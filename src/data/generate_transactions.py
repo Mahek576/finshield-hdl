@@ -180,6 +180,79 @@ def generate_mixed_risk_transaction(rng, profile, timestamp, transaction_id):
         "is_fraud": 1
     }
 
+def inject_realistic_overlap(df, rng):
+    df = df.copy()
+
+    normal_indices = df[df["is_fraud"] == 0].index.to_numpy()
+    fraud_indices = df[df["is_fraud"] == 1].index.to_numpy()
+
+    benign_high_value_count = int(0.06 * len(normal_indices))
+    benign_velocity_count = int(0.05 * len(normal_indices))
+    subtle_fraud_count = int(0.18 * len(fraud_indices))
+
+    benign_high_value_idx = rng.choice(
+        normal_indices,
+        size=benign_high_value_count,
+        replace=False
+    )
+
+    remaining_normal_indices = np.setdiff1d(normal_indices, benign_high_value_idx)
+
+    benign_velocity_idx = rng.choice(
+        remaining_normal_indices,
+        size=benign_velocity_count,
+        replace=False
+    )
+
+    subtle_fraud_idx = rng.choice(
+        fraud_indices,
+        size=subtle_fraud_count,
+        replace=False
+    )
+
+    for idx in benign_high_value_idx:
+        avg_amount = df.at[idx, "avg_amount_30d"]
+        daily_limit = df.at[idx, "daily_limit"]
+
+        df.at[idx, "amount"] = round(float(rng.uniform(3.0, 6.5) * avg_amount), 2)
+        df.at[idx, "daily_total_before_txn"] = round(float(rng.uniform(0.25, 0.65) * daily_limit), 2)
+        df.at[idx, "beneficiary_age_days"] = int(rng.integers(60, 1200))
+        df.at[idx, "merchant_risk_score"] = int(rng.integers(35, 70))
+        df.at[idx, "failed_login_count_1h"] = int(rng.choice([0, 0, 1]))
+        df.at[idx, "is_new_device"] = int(rng.random() < 0.08)
+        df.at[idx, "is_new_location"] = int(rng.random() < 0.08)
+        df.at[idx, "risk_type"] = "BENIGN_HIGH_VALUE"
+        df.at[idx, "is_fraud"] = 0
+
+    for idx in benign_velocity_idx:
+        avg_amount = df.at[idx, "avg_amount_30d"]
+
+        df.at[idx, "amount"] = round(float(rng.uniform(0.4, 1.4) * avg_amount), 2)
+        df.at[idx, "tx_count_2min"] = int(rng.integers(5, 9))
+        df.at[idx, "beneficiary_age_days"] = int(rng.integers(90, 1500))
+        df.at[idx, "merchant_risk_score"] = int(rng.integers(20, 60))
+        df.at[idx, "failed_login_count_1h"] = int(rng.choice([0, 0, 1]))
+        df.at[idx, "is_new_device"] = 0
+        df.at[idx, "is_new_location"] = 0
+        df.at[idx, "risk_type"] = "BENIGN_VELOCITY"
+        df.at[idx, "is_fraud"] = 0
+
+    for idx in subtle_fraud_idx:
+        avg_amount = df.at[idx, "avg_amount_30d"]
+        daily_limit = df.at[idx, "daily_limit"]
+
+        df.at[idx, "amount"] = round(float(rng.uniform(1.1, 2.8) * avg_amount), 2)
+        df.at[idx, "daily_total_before_txn"] = round(float(rng.uniform(0.1, 0.55) * daily_limit), 2)
+        df.at[idx, "tx_count_2min"] = int(rng.integers(1, 5))
+        df.at[idx, "beneficiary_age_days"] = int(rng.integers(5, 90))
+        df.at[idx, "is_new_device"] = int(rng.random() < 0.45)
+        df.at[idx, "is_new_location"] = int(rng.random() < 0.45)
+        df.at[idx, "failed_login_count_1h"] = int(rng.integers(0, 3))
+        df.at[idx, "merchant_risk_score"] = int(rng.integers(35, 75))
+        df.at[idx, "risk_type"] = "SUBTLE_FRAUD"
+        df.at[idx, "is_fraud"] = 1
+
+    return df
 
 def generate_transactions(n_transactions=6000, seed=42):
     rng = np.random.default_rng(seed)
@@ -223,6 +296,8 @@ def generate_transactions(n_transactions=6000, seed=42):
         rows.append(row)
 
     df = pd.DataFrame(rows)
+
+    df = inject_realistic_overlap(df, rng)
 
     df["total_after_txn"] = df["daily_total_before_txn"] + df["amount"]
     df["daily_limit_utilization"] = df["total_after_txn"] / df["daily_limit"]

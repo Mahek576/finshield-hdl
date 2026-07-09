@@ -9,9 +9,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 FINAL_DECISIONS_PATH = PROJECT_ROOT / "data" / "processed" / "final_decision_transactions.csv"
 AUDIT_VIEW_PATH = PROJECT_ROOT / "data" / "processed" / "audit_log_view.csv"
 HARDWARE_PACKET_PATH = PROJECT_ROOT / "data" / "processed" / "hardware_risk_packets.csv"
+
 MODEL_METRICS_PATH = PROJECT_ROOT / "results" / "model_metrics.json"
 FEATURE_IMPORTANCE_PATH = PROJECT_ROOT / "results" / "feature_importance.csv"
 AUDIT_SUMMARY_PATH = PROJECT_ROOT / "results" / "audit_summary.json"
+
 MODEL_COMPARISON_PATH = PROJECT_ROOT / "results" / "model_comparison.csv"
 BEST_MODEL_SUMMARY_PATH = PROJECT_ROOT / "results" / "best_model_summary.json"
 
@@ -27,8 +29,8 @@ def load_json(path):
     if not path.exists():
         return {}
 
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+    with open(path, "r", encoding="utf-8") as file:
+        return json.load(file)
 
 
 @st.cache_data
@@ -48,7 +50,7 @@ def load_data():
 
     if missing_files:
         raise FileNotFoundError(
-            "Missing required files. Run the full pipeline first:\n"
+            "Missing required files. Run the full pipeline first:\n\n"
             "python run_pipeline.py\n\n"
             f"Missing files: {missing_files}"
         )
@@ -100,11 +102,17 @@ def format_percentage(value):
     return f"{round(value * 100, 2)}%"
 
 
+def safe_columns(df, columns):
+    return [column for column in columns if column in df.columns]
+
+
 def main():
     st.title("🛡️ FinShield HDL")
+
     st.caption(
-        "AI-powered fintech risk engine with ML fraud scoring, anomaly benchmarking, "
-        "cybersecurity rules, audit traceability, and hardware-ready decision packets."
+        "AI-powered fintech risk engine with supervised ML, anomaly detection, "
+        "cybersecurity rules, audit traceability, dashboard monitoring, and "
+        "hardware-ready decision packets for planned Verilog HDL enforcement."
     )
 
     try:
@@ -118,6 +126,7 @@ def main():
             audit_summary,
             best_model_summary
         ) = load_data()
+
     except FileNotFoundError as error:
         st.error(str(error))
         st.stop()
@@ -125,7 +134,7 @@ def main():
     st.sidebar.title("Filters")
 
     risk_types = ["All"] + sorted(df["risk_type"].dropna().unique().tolist())
-    actions = ["All"] + ["ALLOW", "WARN", "BLOCK", "LOCK"]
+    actions = ["All", "ALLOW", "WARN", "BLOCK", "LOCK"]
     severities = ["All"] + sorted(df["severity"].dropna().unique().tolist())
     decision_sources = ["All"] + sorted(df["decision_source"].dropna().unique().tolist())
 
@@ -157,13 +166,16 @@ def main():
 
     filtered_df = filtered_df[filtered_df["final_risk_score"] >= min_final_score]
 
-    st.divider()
-
     total_transactions = len(filtered_df)
+
     allow_count = int((filtered_df["final_action"] == "ALLOW").sum())
     warn_count = int((filtered_df["final_action"] == "WARN").sum())
     block_count = int((filtered_df["final_action"] == "BLOCK").sum())
     lock_count = int((filtered_df["final_action"] == "LOCK").sum())
+
+    st.divider()
+
+    st.subheader("Security decision overview")
 
     col1, col2, col3, col4, col5 = st.columns(5)
 
@@ -201,6 +213,40 @@ def main():
         enforcement_rate = enforcement_count / total_transactions if total_transactions else 0
         metric_card("Enforcement rate", format_percentage(enforcement_rate))
 
+    anom1, anom2, anom3, anom4 = st.columns(4)
+
+    with anom1:
+        avg_autoencoder_score = (
+            filtered_df["autoencoder_anomaly_score"].mean()
+            if "autoencoder_anomaly_score" in filtered_df.columns and total_transactions
+            else 0
+        )
+        metric_card("Avg autoencoder anomaly", round(avg_autoencoder_score, 2))
+
+    with anom2:
+        avg_isolation_score = (
+            filtered_df["isolation_forest_anomaly_score"].mean()
+            if "isolation_forest_anomaly_score" in filtered_df.columns and total_transactions
+            else 0
+        )
+        metric_card("Avg isolation anomaly", round(avg_isolation_score, 2))
+
+    with anom3:
+        autoencoder_flags = (
+            int((filtered_df["autoencoder_anomaly_score"] >= 70).sum())
+            if "autoencoder_anomaly_score" in filtered_df.columns
+            else 0
+        )
+        metric_card("Autoencoder flags", f"{autoencoder_flags:,}")
+
+    with anom4:
+        isolation_flags = (
+            int((filtered_df["isolation_forest_anomaly_score"] >= 75).sum())
+            if "isolation_forest_anomaly_score" in filtered_df.columns
+            else 0
+        )
+        metric_card("Isolation flags", f"{isolation_flags:,}")
+
     st.divider()
 
     left, right = st.columns(2)
@@ -237,34 +283,81 @@ def main():
 
     st.subheader("Average scores by risk type")
 
-    score_summary = (
-        filtered_df.groupby("risk_type")[
-            [
-                "ml_fraud_score",
-                "rule_risk_score",
-                "final_risk_score"
-            ]
+    score_columns = safe_columns(
+        filtered_df,
+        [
+            "ml_fraud_score",
+            "rule_risk_score",
+            "autoencoder_anomaly_score",
+            "isolation_forest_anomaly_score",
+            "final_risk_score"
         ]
-        .mean()
-        .round(2)
-        .sort_values("final_risk_score", ascending=False)
     )
 
-    st.dataframe(score_summary, width="stretch")
-    st.bar_chart(score_summary)
+    if score_columns:
+        score_summary = (
+            filtered_df.groupby("risk_type")[score_columns]
+            .mean()
+            .round(2)
+            .sort_values("final_risk_score", ascending=False)
+        )
+
+        st.dataframe(score_summary, width="stretch")
+        st.bar_chart(score_summary)
+
+    st.divider()
+
+    st.subheader("Anomaly detection layer")
+
+    st.caption(
+        "The anomaly layer uses a deep autoencoder and Isolation Forest to detect unusual "
+        "transaction behavior beyond supervised fraud classification."
+    )
+
+    anomaly_columns = safe_columns(
+        filtered_df,
+        [
+            "autoencoder_anomaly_score",
+            "isolation_forest_anomaly_score",
+            "final_risk_score"
+        ]
+    )
+
+    if anomaly_columns:
+        anomaly_summary = (
+            filtered_df.groupby("risk_type")[anomaly_columns]
+            .mean()
+            .round(2)
+            .sort_values("final_risk_score", ascending=False)
+        )
+
+        st.dataframe(anomaly_summary, width="stretch")
+        st.bar_chart(anomaly_summary)
+
+    anomaly_severity_counts = audit_summary.get("anomaly_severity_counts", {})
+
+    if anomaly_severity_counts:
+        st.subheader("Anomaly severity distribution")
+
+        anomaly_severity_df = pd.DataFrame(
+            list(anomaly_severity_counts.items()),
+            columns=["severity", "count"]
+        ).set_index("severity")
+
+        st.bar_chart(anomaly_severity_df)
 
     st.divider()
 
     st.subheader("Model benchmarking")
 
+    st.caption(
+        "This benchmark compares supervised ML, neural-network, and anomaly-detection "
+        "models using fraud metrics and inference latency."
+    )
+
     best_metrics = best_model_summary.get("metrics", {})
     best_model_name = best_model_summary.get("best_model_name", "NA")
     best_model_type = best_model_summary.get("best_model_type", "NA")
-
-    st.caption(
-        "The benchmark compares supervised ML, neural-network, and anomaly-detection models "
-        "using fraud detection metrics and inference latency."
-    )
 
     best_cols = st.columns(6)
 
@@ -295,40 +388,36 @@ def main():
         metric_card("False negatives", best_metrics.get("false_negative", "NA"))
 
     with latency_cols[2]:
-        metric_card(
-            "Latency / txn",
-            best_metrics.get("latency_ms_per_transaction", "NA")
-        )
+        metric_card("Latency / txn", best_metrics.get("latency_ms_per_transaction", "NA"))
 
     with latency_cols[3]:
         metric_card("Selection score", best_metrics.get("selection_score", "NA"))
 
-    comparison_display_columns = [
-        "model_name",
-        "model_type",
-        "accuracy",
-        "precision",
-        "recall",
-        "f1_score",
-        "roc_auc",
-        "average_precision",
-        "false_positive",
-        "false_negative",
-        "latency_ms_per_transaction",
-        "selection_score"
-    ]
-
-    available_comparison_columns = [
-        col for col in comparison_display_columns
-        if col in model_comparison_df.columns
-    ]
+    comparison_display_columns = safe_columns(
+        model_comparison_df,
+        [
+            "model_name",
+            "model_type",
+            "accuracy",
+            "precision",
+            "recall",
+            "f1_score",
+            "roc_auc",
+            "average_precision",
+            "false_positive",
+            "false_negative",
+            "latency_ms_per_transaction",
+            "selection_score"
+        ]
+    )
 
     st.dataframe(
-        model_comparison_df[available_comparison_columns],
+        model_comparison_df[comparison_display_columns],
         width="stretch"
     )
 
-    benchmark_chart_df = model_comparison_df.set_index("model_name")[
+    benchmark_chart_columns = safe_columns(
+        model_comparison_df,
         [
             "precision",
             "recall",
@@ -336,16 +425,18 @@ def main():
             "average_precision",
             "selection_score"
         ]
-    ]
+    )
 
-    st.bar_chart(benchmark_chart_df)
+    if benchmark_chart_columns and "model_name" in model_comparison_df.columns:
+        benchmark_chart_df = model_comparison_df.set_index("model_name")[benchmark_chart_columns]
+        st.bar_chart(benchmark_chart_df)
 
     with st.expander("View best model summary JSON"):
         st.json(best_model_summary)
 
     st.divider()
 
-    st.subheader("Primary model performance")
+    st.subheader("Primary Random Forest model performance")
 
     metric_cols = st.columns(6)
 
@@ -386,24 +477,29 @@ def main():
         ascending=False
     )
 
+    high_risk_columns = safe_columns(
+        high_risk_df,
+        [
+            "transaction_id",
+            "account_id",
+            "timestamp",
+            "risk_type",
+            "amount",
+            "ml_fraud_score",
+            "model_confidence",
+            "rule_risk_score",
+            "autoencoder_anomaly_score",
+            "isolation_forest_anomaly_score",
+            "final_risk_score",
+            "severity",
+            "decision_source",
+            "final_action",
+            "final_reason"
+        ]
+    )
+
     st.dataframe(
-        high_risk_df[
-            [
-                "transaction_id",
-                "account_id",
-                "timestamp",
-                "risk_type",
-                "amount",
-                "ml_fraud_score",
-                "model_confidence",
-                "rule_risk_score",
-                "final_risk_score",
-                "severity",
-                "decision_source",
-                "final_action",
-                "final_reason"
-            ]
-        ].head(100),
+        high_risk_df[high_risk_columns].head(100),
         width="stretch"
     )
 
@@ -415,26 +511,32 @@ def main():
         audit_df["transaction_id"].isin(filtered_df["transaction_id"])
     ]
 
+    audit_columns = safe_columns(
+        filtered_audit_df,
+        [
+            "audit_id",
+            "transaction_id",
+            "timestamp",
+            "severity",
+            "decision_source",
+            "amount",
+            "rule_risk_score",
+            "ml_fraud_score",
+            "model_confidence",
+            "autoencoder_anomaly_score",
+            "isolation_forest_anomaly_score",
+            "autoencoder_reconstruction_error",
+            "final_risk_score",
+            "rule_action",
+            "final_action",
+            "final_reason",
+            "risk_type",
+            "is_fraud"
+        ]
+    )
+
     st.dataframe(
-        filtered_audit_df[
-            [
-                "audit_id",
-                "transaction_id",
-                "timestamp",
-                "severity",
-                "decision_source",
-                "amount",
-                "rule_risk_score",
-                "ml_fraud_score",
-                "model_confidence",
-                "final_risk_score",
-                "rule_action",
-                "final_action",
-                "final_reason",
-                "risk_type",
-                "is_fraud"
-            ]
-        ].head(200),
+        filtered_audit_df[audit_columns].head(200),
         width="stretch"
     )
 

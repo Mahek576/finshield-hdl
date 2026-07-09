@@ -1,0 +1,22 @@
+{
+    "best_model_name": "Gradient Boosting",
+    "best_model_type": "supervised_classifier",
+    "selection_score": 0.9943,
+    "reason": "Best model selected using a weighted score prioritizing average precision, recall, F1 score, and precision.",
+    "metrics": {
+        "model_name": "Gradient Boosting",
+        "model_type": "supervised_classifier",
+        "accuracy": 0.9953,
+        "precision": 0.9882,
+        "recall": 0.9911,
+        "f1_score": 0.9896,
+        "roc_auc": 0.9998,
+        "average_precision": 0.9993,
+        "true_negative": 1159,
+        "false_positive": 4,
+        "false_negative": 3,
+        "true_positive": 334,
+        "latency_ms_per_transaction": 0.015662,
+        "selection_score": 0.9943
+    }
+}

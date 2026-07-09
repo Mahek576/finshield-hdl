@@ -1,0 +1,7 @@
+model_name,model_type,accuracy,precision,recall,f1_score,roc_auc,average_precision,true_negative,false_positive,false_negative,true_positive,latency_ms_per_transaction,selection_score
+Gradient Boosting,supervised_classifier,0.9953,0.9882,0.9911,0.9896,0.9998,0.9993,1159,4,3,334,0.015662,0.9943
+Random Forest,supervised_classifier,0.9933,0.9739,0.997,0.9853,0.9996,0.9987,1154,9,1,336,0.063219,0.9943
+Logistic Regression,supervised_classifier,0.984,0.9433,0.9881,0.9652,0.999,0.9965,1143,20,4,333,0.000656,0.9851
+MLP Neural Network,supervised_classifier,0.984,0.9617,0.9674,0.9645,0.9989,0.9962,1150,13,11,326,0.002821,0.9795
+Autoencoder Anomaly Detector,neural_anomaly_detector,0.9527,0.841,0.9733,0.9023,0.9898,0.9718,1101,62,9,328,0.000817,0.9518
+Isolation Forest,unsupervised_anomaly_detector,0.924,0.8195,0.8487,0.8338,0.9755,0.9248,1100,63,51,286,0.036592,0.8785

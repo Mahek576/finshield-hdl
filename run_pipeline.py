@@ -17,8 +17,12 @@ PIPELINE_STEPS = [
         "command": ["src/rules/risk_rules.py"]
     },
     {
-        "name": "Train ML fraud model",
+        "name": "Train primary ML fraud model",
         "command": ["src/ml/train_model.py"]
+    },
+    {
+        "name": "Benchmark ML and anomaly detection models",
+        "command": ["src/ml/benchmark_models.py"]
     },
     {
         "name": "Run hybrid final decision engine",
@@ -82,12 +86,17 @@ def main():
     print("Generated outputs:")
     print("data/sample_transactions.csv")
     print("data/processed/rule_scored_transactions.csv")
+    print("data/processed/verilog_decision_packets.csv")
     print("data/processed/ml_scored_transactions.csv")
+    print("data/processed/benchmark_scored_transactions.csv")
     print("data/processed/final_decision_transactions.csv")
     print("data/processed/hardware_risk_packets.csv")
     print("data/processed/audit_log_view.csv")
     print("results/model_metrics.json")
     print("results/feature_importance.csv")
+    print("results/model_comparison.csv")
+    print("results/model_comparison.json")
+    print("results/best_model_summary.json")
     print("results/audit_logs.jsonl")
     print("results/audit_summary.json")
     print()

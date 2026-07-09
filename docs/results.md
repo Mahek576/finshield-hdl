@@ -78,6 +78,40 @@ Confusion matrix:
 
 The model is strong but not perfectly clean, which is more realistic than an artificial 1.0000 score across every metric.
 
+## Model Benchmarking Results
+
+FinShield HDL now includes a benchmarking layer that compares supervised ML, neural-network, and anomaly-detection models.
+
+Models benchmarked:
+
+- Logistic Regression
+- Random Forest
+- Gradient Boosting
+- MLP Neural Network
+- Isolation Forest
+- Autoencoder Anomaly Detector
+
+Best model:
+
+- Gradient Boosting
+
+Best model metrics:
+
+- Accuracy: 0.9953
+- Precision: 0.9882
+- Recall: 0.9911
+- F1 score: 0.9896
+- ROC AUC: 0.9998
+- Average precision / PR-AUC: 0.9993
+- True negatives: 1159
+- False positives: 4
+- False negatives: 3
+- True positives: 334
+- Latency per transaction: approximately 0.015 ms
+- Selection score: 0.9943
+
+The benchmark layer compares models using fraud-relevant metrics such as recall, precision, PR-AUC, false positives, false negatives, and inference latency. This makes the project closer to a real-world fintech risk system, where the best model is not selected by accuracy alone.
+
 ## Top Feature Importances
 
 The most important model features were:
@@ -149,6 +183,10 @@ Main processed files:
 - data/processed/final_decision_transactions.csv
 - data/processed/hardware_risk_packets.csv
 - data/processed/audit_log_view.csv
+- data/processed/benchmark_scored_transactions.csv
+- results/model_comparison.csv
+- results/model_comparison.json
+- results/best_model_summary.json
 
 Main result files:
 

@@ -15,7 +15,8 @@ The current implementation includes the Python-based intelligence, rule, audit, 
 Transaction Generator
 -> Feature Engineering
 -> Cybersecurity Rule Engine
--> ML Fraud Model
+-> Primary ML Fraud Model
+-> ML and Anomaly Model Benchmarking
 -> Hybrid Final Decision Engine
 -> Audit Log Engine
 -> Streamlit Dashboard
@@ -89,7 +90,46 @@ The model is saved to:
 
 models/finshield_fraud_model.joblib
 
-### 4. Hybrid Final Decision Engine
+### 4. Model Benchmarking Layer
+
+File:
+
+src/ml/benchmark_models.py
+
+This module benchmarks multiple supervised, neural-network, and anomaly-detection models for fraud scoring.
+
+Models compared:
+
+- Logistic Regression
+- Random Forest
+- Gradient Boosting
+- MLP Neural Network
+- Isolation Forest
+- Autoencoder Anomaly Detector
+
+The benchmark evaluates each model using:
+
+- accuracy
+- precision
+- recall
+- F1 score
+- ROC AUC
+- average precision / PR-AUC
+- false positives
+- false negatives
+- latency per transaction
+- selection score
+
+Outputs:
+
+results/model_comparison.csv
+results/model_comparison.json
+results/best_model_summary.json
+data/processed/benchmark_scored_transactions.csv
+
+The benchmark layer makes the intelligence system more realistic because it compares multiple model families before selecting the best-performing model.
+
+### 5. Hybrid Final Decision Engine
 
 File:
 
@@ -117,7 +157,7 @@ Final actions are encoded as:
 - BLOCK = 2
 - LOCK = 3
 
-### 5. Audit Log Engine
+### 6. Audit Log Engine
 
 File:
 
@@ -142,7 +182,7 @@ results/audit_logs.jsonl
 results/audit_summary.json
 data/processed/audit_log_view.csv
 
-### 6. Dashboard
+### 7. Dashboard
 
 File:
 
@@ -160,7 +200,7 @@ The Streamlit dashboard provides a visual monitoring interface for:
 - audit log view
 - hardware-ready risk packets
 
-### 7. Hardware-Ready Packets
+### 8. Hardware-Ready Packets
 
 File:
 

@@ -37,6 +37,9 @@ The long-term goal is to connect AI-based fintech security decisions with a dete
 - Streamlit monitoring dashboard
 - Hardware-ready risk packet generation
 - Planned Verilog HDL kill-switch FSM
+- ML and anomaly model benchmarking
+- Logistic Regression, Random Forest, Gradient Boosting, MLP, Isolation Forest, and Autoencoder comparison
+- Best-model selection using precision, recall, F1, PR-AUC, false positives, false negatives, and latency
 
 ## Risk Types Simulated
 
@@ -122,6 +125,39 @@ Saved model:
 ```text
 models/finshield_fraud_model.joblib
 ```
+Benchmarks multiple supervised, neural, and anomaly-detection models for fintech fraud scoring.
+
+Models compared:
+
+Logistic Regression
+Random Forest
+Gradient Boosting
+MLP Neural Network
+Isolation Forest
+Autoencoder Anomaly Detector
+
+Evaluation metrics:
+
+accuracy
+precision
+recall
+F1 score
+ROC AUC
+average precision / PR-AUC
+false positives
+false negatives
+latency per transaction
+selection score
+Outputs:
+
+results/model_comparison.csv
+results/model_comparison.json
+results/best_model_summary.json
+data/processed/benchmark_scored_transactions.csv
+
+Current best model:
+
+Gradient Boosting
 
 ### 4. Hybrid Final Decision Engine
 
@@ -206,37 +242,37 @@ The dashboard shows:
 ```text
 finshield-hdl/
 +-- data/
-¦   +-- raw/
-¦   +-- processed/
-¦   +-- sample_transactions.csv
+ï¿½   +-- raw/
+ï¿½   +-- processed/
+ï¿½   +-- sample_transactions.csv
 +-- docs/
-¦   +-- architecture.md
-¦   +-- results.md
-¦   +-- verilog_design.md
+ï¿½   +-- architecture.md
+ï¿½   +-- results.md
+ï¿½   +-- verilog_design.md
 +-- hdl/
-¦   +-- daily_limit_checker.v
-¦   +-- velocity_checker.v
-¦   +-- risk_threshold_checker.v
-¦   +-- account_takeover_checker.v
-¦   +-- kill_switch_fsm.v
-¦   +-- finshield_top.v
-¦   +-- tb_finshield_top.v
+ï¿½   +-- daily_limit_checker.v
+ï¿½   +-- velocity_checker.v
+ï¿½   +-- risk_threshold_checker.v
+ï¿½   +-- account_takeover_checker.v
+ï¿½   +-- kill_switch_fsm.v
+ï¿½   +-- finshield_top.v
+ï¿½   +-- tb_finshield_top.v
 +-- models/
-¦   +-- finshield_fraud_model.joblib
+ï¿½   +-- finshield_fraud_model.joblib
 +-- results/
-¦   +-- model_metrics.json
-¦   +-- feature_importance.csv
-¦   +-- audit_logs.jsonl
-¦   +-- audit_summary.json
+ï¿½   +-- model_metrics.json
+ï¿½   +-- feature_importance.csv
+ï¿½   +-- audit_logs.jsonl
+ï¿½   +-- audit_summary.json
 +-- simulations/
 +-- src/
-¦   +-- audit/
-¦   +-- comparison/
-¦   +-- dashboard/
-¦   +-- data/
-¦   +-- features/
-¦   +-- ml/
-¦   +-- rules/
+ï¿½   +-- audit/
+ï¿½   +-- comparison/
+ï¿½   +-- dashboard/
+ï¿½   +-- data/
+ï¿½   +-- features/
+ï¿½   +-- ml/
+ï¿½   +-- rules/
 +-- run_pipeline.py
 +-- README.md
 +-- requirements.txt
@@ -327,26 +363,34 @@ Rule action distribution:
 
 ### ML Fraud Model
 
-Model:
+### Model Benchmarking Results
 
-- Random Forest Classifier
+Models compared:
 
-Metrics:
+- Logistic Regression
+- Random Forest
+- Gradient Boosting
+- MLP Neural Network
+- Isolation Forest
+- Autoencoder Anomaly Detector
 
-- Accuracy: 0.9933
-- Precision: 0.9739
-- Recall: 0.9970
-- F1 score: 0.9853
-- ROC AUC: 0.9996
-- Average precision: 0.9987
+Best model:
 
-Confusion matrix:
+- Gradient Boosting
 
-- True negative: 1154
-- False positive: 9
-- False negative: 1
-- True positive: 336
+Best model metrics:
 
+- Accuracy: 0.9953
+- Precision: 0.9882
+- Recall: 0.9911
+- F1 score: 0.9896
+- ROC AUC: 0.9998
+- Average precision / PR-AUC: 0.9993
+- False positives: 4
+- False negatives: 3
+- Latency per transaction: approximately 0.015 ms
+
+This benchmark layer makes the system closer to real-world ML practice because the final model is selected using fraud-relevant metrics, not accuracy alone.
 ### Hybrid Final Decision Engine
 
 Final action distribution:
@@ -439,6 +483,8 @@ Completed:
 - Results documentation
 - Hardware-ready risk packet generation
 - One-command pipeline runner
+- ML and anomaly model benchmarking
+- Best-model selection based on fraud metrics and inference latency
 
 Planned:
 

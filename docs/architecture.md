@@ -1,39 +1,68 @@
 # FinShield HDL Architecture
 
-FinShield HDL is a hybrid AI and hardware-oriented fintech security system for transaction risk monitoring and low-latency enforcement.
+FinShield HDL is an AI-powered fintech security architecture designed for transaction risk monitoring, fraud scoring, anomaly detection, cybersecurity rule enforcement, audit traceability, and hardware-ready decision making.
 
-The project is designed around three layers:
+The project is built around one central idea:
 
-1. Intelligence Layer
-2. Security Rule Layer
-3. Hardware Enforcement Layer
+> A fintech security system should not stop at fraud prediction. It should produce explainable, enforceable, and low-latency security decisions.
 
-The current implementation includes the Python-based intelligence, rule, audit, and dashboard layers. The Verilog HDL enforcement layer is designed and will be implemented through Vivado in the next phase.
+FinShield HDL combines supervised machine learning, anomaly detection, deterministic cybersecurity rules, audit logging, dashboard monitoring, and compact hardware-ready risk packets for a planned Verilog HDL kill-switch engine.
 
-## System Flow
+---
 
-Transaction Generator
+## Architecture Goal
+
+The goal of FinShield HDL is to simulate how a real fintech risk system could make fast security decisions for financial transactions.
+
+A typical fraud detection project ends here:
+
+```text
+Dataset -> ML Model -> Accuracy
+```
+
+FinShield HDL goes further:
+
+```text
+Transaction Stream
 -> Feature Engineering
 -> Cybersecurity Rule Engine
 -> Primary ML Fraud Model
 -> ML and Anomaly Model Benchmarking
--> Hybrid Final Decision Engine
--> Audit Log Engine
+-> Autoencoder + Isolation Forest Anomaly Signals
+-> Hybrid ML + Rule + Anomaly Decision Engine
+-> Audit Logs
 -> Streamlit Dashboard
 -> Hardware-Ready Risk Packets
--> Verilog Kill-Switch Engine
+-> Planned Verilog HDL Kill-Switch FSM
+```
 
-## Main Components
+This makes the project closer to a real security platform than a standalone notebook.
 
-### 1. Synthetic Transaction Generator
+---
 
-File:
+## Core Layers
 
+FinShield HDL is organized into five major layers:
+
+1. Data and transaction simulation layer
+2. Intelligence and anomaly detection layer
+3. Cybersecurity rule layer
+4. Decision, audit, and dashboard layer
+5. Hardware-ready HDL enforcement layer
+
+---
+
+## 1. Transaction Simulation Layer
+
+### File
+
+```text
 src/data/generate_transactions.py
+```
 
-This module generates synthetic financial transactions with realistic risk patterns.
+This layer generates synthetic financial transactions with realistic risk signals.
 
-Generated transaction types include:
+The generated transaction types include:
 
 - NORMAL
 - BENIGN_HIGH_VALUE
@@ -45,15 +74,35 @@ Generated transaction types include:
 - SUBTLE_FRAUD
 - MIXED_RISK
 
-The generator intentionally adds overlap between normal and fraudulent behavior so that the ML model is not trained on an unrealistically easy dataset.
+The dataset intentionally contains overlap between legitimate and suspicious behavior.
 
-### 2. Cybersecurity Rule Engine
+For example:
 
-File:
+- a genuine customer may perform a high-value transfer,
+- a normal account may temporarily show high transaction velocity,
+- some fraud cases may appear subtle and avoid obvious hard-rule triggers.
 
+This makes the dataset more realistic than a perfectly separated synthetic fraud dataset.
+
+### Output
+
+```text
+data/sample_transactions.csv
+```
+
+---
+
+## 2. Cybersecurity Rule Engine
+
+### File
+
+```text
 src/rules/risk_rules.py
+```
 
-The rule engine creates deterministic security signals such as:
+The rule engine applies deterministic cybersecurity and transaction-risk checks.
+
+It generates signals such as:
 
 - daily_limit_breach
 - velocity_spike
@@ -64,39 +113,63 @@ The rule engine creates deterministic security signals such as:
 - failed_login_risk
 - suspicious_hour_activity
 
-It produces:
+The rule engine produces:
 
 - rule_risk_score
 - rule_action
 - reason_codes
 - verilog_decision_packets.csv
 
-### 3. ML Fraud Scoring Pipeline
+This layer is important because real fintech systems cannot rely only on model probabilities. Certain security events, such as account takeover signals or daily-limit breaches, require deterministic enforcement.
 
-File:
+### Outputs
 
+```text
+data/processed/rule_scored_transactions.csv
+data/processed/verilog_decision_packets.csv
+```
+
+---
+
+## 3. Primary ML Fraud Model
+
+### File
+
+```text
 src/ml/train_model.py
+```
 
-The ML pipeline trains a Random Forest classifier using behavioral transaction features.
+The primary fraud model is a supervised Random Forest classifier trained on transaction behavior features.
 
-The model outputs:
+It produces:
 
 - ml_fraud_probability
 - ml_fraud_score
 - model_confidence
 - predicted_fraud
 
-The model is saved to:
+The model is trained on behavioral signals such as amount patterns, transaction velocity, beneficiary age, failed login count, merchant risk score, and account-level usage features.
 
+### Outputs
+
+```text
 models/finshield_fraud_model.joblib
+data/processed/ml_scored_transactions.csv
+results/model_metrics.json
+results/feature_importance.csv
+```
 
-### 4. Model Benchmarking Layer
+---
 
-File:
+## 4. ML and Anomaly Model Benchmarking
 
+### File
+
+```text
 src/ml/benchmark_models.py
+```
 
-This module benchmarks multiple supervised, neural-network, and anomaly-detection models for fraud scoring.
+The benchmarking layer compares multiple supervised, neural-network, and anomaly-detection models.
 
 Models compared:
 
@@ -107,7 +180,7 @@ Models compared:
 - Isolation Forest
 - Autoencoder Anomaly Detector
 
-The benchmark evaluates each model using:
+The benchmark evaluates each model using fraud-relevant metrics:
 
 - accuracy
 - precision
@@ -120,117 +193,261 @@ The benchmark evaluates each model using:
 - latency per transaction
 - selection score
 
-Outputs:
+The best model is not selected using accuracy alone. It is selected using metrics that matter in fintech fraud systems: catching fraud, reducing false alerts, and keeping inference latency low.
 
+### Current Best Model
+
+```text
+Gradient Boosting
+```
+
+### Outputs
+
+```text
 results/model_comparison.csv
 results/model_comparison.json
 results/best_model_summary.json
 data/processed/benchmark_scored_transactions.csv
+```
 
-The benchmark layer makes the intelligence system more realistic because it compares multiple model families before selecting the best-performing model.
+---
 
-### 5. Hybrid Final Decision Engine
+## 5. Anomaly Detection Layer
 
-File:
+The anomaly detection layer adds unsupervised and deep-learning based risk signals to the system.
 
+Models used:
+
+- Autoencoder Anomaly Detector
+- Isolation Forest
+
+The autoencoder learns normal transaction behavior and flags transactions with high reconstruction error.
+
+The Isolation Forest identifies unusual transaction patterns without depending only on fraud labels.
+
+Generated anomaly signals:
+
+- autoencoder_anomaly_score
+- isolation_forest_anomaly_score
+- autoencoder_reconstruction_error
+- autoencoder_anomaly_flag
+- isolation_forest_anomaly_flag
+- anomaly_severity
+
+This layer helps the system detect unknown or subtle abnormal behavior that may not match previously labeled fraud patterns.
+
+---
+
+## 6. Hybrid ML + Rule + Anomaly Decision Engine
+
+### File
+
+```text
 src/rules/final_decision_engine.py
+```
 
-This layer combines:
+This is the main enforcement logic layer.
 
-- ML fraud score
-- model confidence
-- rule risk score
-- rule action
-- cybersecurity reason codes
+It combines:
 
-It outputs:
+- supervised ML fraud score,
+- model confidence,
+- cybersecurity rule score,
+- rule action,
+- autoencoder anomaly score,
+- Isolation Forest anomaly score,
+- reconstruction error,
+- account takeover signals,
+- daily limit signals,
+- velocity and beneficiary risk,
+- final reason codes.
+
+The final decision engine produces:
 
 - final_risk_score
 - final_action
 - final_action_code
 - final_reason
 
-Final actions are encoded as:
+Final action encoding:
 
-- ALLOW = 0
-- WARN = 1
-- BLOCK = 2
-- LOCK = 3
+| Action | Code | Meaning |
+|---|---:|---|
+| ALLOW | 0 | Transaction is allowed |
+| WARN | 1 | Transaction is suspicious and should be monitored |
+| BLOCK | 2 | Transaction should be blocked |
+| LOCK | 3 | Account/session should be locked until review |
 
-### 6. Audit Log Engine
+### Outputs
 
-File:
+```text
+data/processed/final_decision_transactions.csv
+data/processed/hardware_risk_packets.csv
+```
 
+---
+
+## 7. Audit Log Engine
+
+### File
+
+```text
 src/audit/audit_logger.py
+```
 
-The audit layer generates explainable decision records for every transaction.
+The audit layer converts every transaction decision into an explainable audit record.
 
 Each audit record includes:
 
-- transaction details
-- rule signals
-- ML scores
-- final action
-- severity
-- decision source
-- ground truth label
-- hardware packet readiness
+- transaction details,
+- cybersecurity rule signals,
+- ML fraud score,
+- model confidence,
+- autoencoder anomaly score,
+- Isolation Forest anomaly score,
+- reconstruction error,
+- final risk score,
+- final action,
+- final reason,
+- severity,
+- decision source,
+- anomaly severity,
+- ground truth label,
+- hardware packet readiness.
 
-Outputs:
+This makes the system reviewable and explainable.
 
+Instead of only saying:
+
+```text
+Transaction was blocked.
+```
+
+the system can explain:
+
+```text
+Transaction was locked because the rule engine detected account takeover behavior, the ML model predicted fraud, and both anomaly detectors marked the transaction as abnormal.
+```
+
+### Outputs
+
+```text
 results/audit_logs.jsonl
 results/audit_summary.json
 data/processed/audit_log_view.csv
+```
 
-### 7. Dashboard
+---
 
-File:
+## 8. Streamlit Dashboard
 
+### File
+
+```text
 src/dashboard/app.py
+```
 
-The Streamlit dashboard provides a visual monitoring interface for:
+The dashboard provides a monitoring interface for:
 
-- final action distribution
-- severity distribution
-- decision source distribution
-- risk type distribution
-- ML model performance
-- feature importance
-- high-risk transactions
-- audit log view
-- hardware-ready risk packets
+- transaction counts,
+- ALLOW / WARN / BLOCK / LOCK distribution,
+- severity distribution,
+- decision source distribution,
+- risk type distribution,
+- ML fraud score,
+- rule risk score,
+- final risk score,
+- autoencoder anomaly score,
+- Isolation Forest anomaly score,
+- anomaly severity distribution,
+- model benchmarking results,
+- feature importance,
+- high-risk transaction review,
+- audit log inspection,
+- hardware-ready packet preview.
 
-### 8. Hardware-Ready Packets
+This gives the project a visual and operational layer instead of leaving the system as command-line output only.
 
-File:
+---
 
+## 9. Hardware-Ready Risk Packets
+
+### File
+
+```text
 data/processed/hardware_risk_packets.csv
+```
 
-This file contains compact integer risk signals that can be consumed by the Verilog HDL kill-switch engine.
+This file contains compact integer-based decision signals intended for future Verilog simulation.
 
-Example signals:
+Example packet fields:
 
 - daily_limit_breach
 - velocity_spike
 - large_amount_anomaly
 - new_beneficiary_risk
 - account_takeover_signal
+- high_merchant_risk
+- failed_login_risk
 - rule_risk_score
 - ml_fraud_score
 - model_confidence
+- autoencoder_anomaly_score
+- isolation_forest_anomaly_score
 - final_risk_score
 - final_action_code
 
-## Why This Architecture Matters
+These packets are designed to act as the bridge between the Python risk engine and the planned HDL kill-switch FSM.
 
-Most fraud detection projects stop at prediction.
+---
 
-FinShield HDL goes further by creating an enforcement-oriented pipeline:
+## 10. Planned Verilog HDL Enforcement Layer
 
-ML risk scoring
+The Verilog HDL layer is planned as the low-latency hardware enforcement layer.
+
+Planned modules:
+
+- daily_limit_checker.v
+- velocity_checker.v
+- risk_threshold_checker.v
+- account_takeover_checker.v
+- kill_switch_fsm.v
+- finshield_top.v
+- tb_finshield_top.v
+
+The HDL layer will consume compact risk signals and produce hardware-style enforcement outputs.
+
+Planned FSM states:
+
+- NORMAL
+- WARNING
+- LOCKED
+
+Planned output actions:
+
+- ALLOW
+- WARN
+- BLOCK
+- LOCK
+
+The HDL phase will be implemented and verified in Vivado.
+
+---
+
+## Why This Architecture Is Strong
+
+FinShield HDL is not just a fraud classifier.
+
+It is an end-to-end fintech security architecture that combines:
+
+```text
+Supervised ML fraud scoring
++ anomaly detection
 + deterministic cybersecurity rules
-+ audit traceability
-+ hardware-ready decision packets
-+ planned Verilog kill-switch enforcement
++ explainable audit logs
++ dashboard monitoring
++ hardware-ready risk packets
++ planned HDL kill-switch enforcement
+```
 
-This makes the project stronger for fintech, cybersecurity, AI engineering, and hardware-aware system design roles.
+This architecture demonstrates system-level thinking across AI, fintech security, cybersecurity rules, explainability, and hardware-aware decision design.

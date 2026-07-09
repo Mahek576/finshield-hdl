@@ -33,6 +33,9 @@ REQUIRED_COLUMNS = [
     "ml_fraud_score",
     "model_confidence",
     "predicted_fraud",
+    "autoencoder_anomaly_score",
+    "isolation_forest_anomaly_score",
+    "autoencoder_reconstruction_error",
     "final_risk_score",
     "final_action",
     "final_action_code",
@@ -83,10 +86,31 @@ def get_severity(final_action):
 def get_decision_source(row):
     rule_enforced = row["rule_action"] != "ALLOW"
     rule_monitored = row["reason_codes"] != "NO_RULE_TRIGGERED"
-    ml_active = row["predicted_fraud"] == 1 or row["ml_fraud_score"] >= 55
+
+    ml_active = (
+        row["predicted_fraud"] == 1
+        or row["ml_fraud_score"] >= 55
+    )
+
+    anomaly_active = (
+        row["autoencoder_anomaly_score"] >= 70
+        or row["isolation_forest_anomaly_score"] >= 75
+    )
+
+    if rule_enforced and ml_active and anomaly_active:
+        return "ML_RULE_ANOMALY_ENGINE"
+
+    if ml_active and anomaly_active:
+        return "ML_AND_ANOMALY_ENGINE"
+
+    if rule_enforced and anomaly_active:
+        return "RULE_AND_ANOMALY_ENGINE"
 
     if rule_enforced and ml_active:
         return "ML_AND_RULE_ENGINE"
+
+    if anomaly_active:
+        return "ANOMALY_ENGINE"
 
     if ml_active:
         return "ML_ENGINE"
@@ -117,6 +141,9 @@ def build_score_snapshot(row):
         "rule_risk_score": int(row["rule_risk_score"]),
         "ml_fraud_score": int(row["ml_fraud_score"]),
         "model_confidence": int(row["model_confidence"]),
+        "autoencoder_anomaly_score": int(row["autoencoder_anomaly_score"]),
+        "isolation_forest_anomaly_score": int(row["isolation_forest_anomaly_score"]),
+        "autoencoder_reconstruction_error": float(row["autoencoder_reconstruction_error"]),
         "final_risk_score": int(row["final_risk_score"])
     }
 
@@ -127,6 +154,30 @@ def build_transaction_snapshot(row):
         "amount": float(row["amount"]),
         "daily_limit": float(row["daily_limit"]),
         "total_after_txn": float(row["total_after_txn"])
+    }
+
+
+def build_anomaly_decision(row):
+    autoencoder_score = int(row["autoencoder_anomaly_score"])
+    isolation_score = int(row["isolation_forest_anomaly_score"])
+
+    autoencoder_flag = autoencoder_score >= 70
+    isolation_flag = isolation_score >= 75
+
+    if autoencoder_score >= 85 or isolation_score >= 85:
+        anomaly_severity = "HIGH"
+    elif autoencoder_flag or isolation_flag:
+        anomaly_severity = "MEDIUM"
+    else:
+        anomaly_severity = "LOW"
+
+    return {
+        "autoencoder_anomaly_score": autoencoder_score,
+        "isolation_forest_anomaly_score": isolation_score,
+        "autoencoder_reconstruction_error": float(row["autoencoder_reconstruction_error"]),
+        "autoencoder_anomaly_flag": bool(autoencoder_flag),
+        "isolation_forest_anomaly_flag": bool(isolation_flag),
+        "anomaly_severity": anomaly_severity
     }
 
 
@@ -150,6 +201,7 @@ def build_audit_record(row):
             "ml_fraud_score": int(row["ml_fraud_score"]),
             "model_confidence": int(row["model_confidence"])
         },
+        "anomaly_decision": build_anomaly_decision(row),
         "final_decision": {
             "final_action": clean_value(row["final_action"]),
             "final_action_code": int(row["final_action_code"]),
@@ -186,6 +238,9 @@ def build_audit_log_view(audit_records):
             "rule_risk_score": record["risk_scores"]["rule_risk_score"],
             "ml_fraud_score": record["risk_scores"]["ml_fraud_score"],
             "model_confidence": record["risk_scores"]["model_confidence"],
+            "autoencoder_anomaly_score": record["risk_scores"]["autoencoder_anomaly_score"],
+            "isolation_forest_anomaly_score": record["risk_scores"]["isolation_forest_anomaly_score"],
+            "autoencoder_reconstruction_error": record["risk_scores"]["autoencoder_reconstruction_error"],
             "final_risk_score": record["risk_scores"]["final_risk_score"],
             "rule_action": record["rule_decision"]["rule_action"],
             "final_action": record["final_decision"]["final_action"],
@@ -202,13 +257,16 @@ def build_audit_summary(df, audit_records):
 
     severity_counts = {}
     decision_source_counts = {}
+    anomaly_severity_counts = {}
 
     for record in audit_records:
         severity = record["severity"]
         decision_source = record["decision_source"]
+        anomaly_severity = record["anomaly_decision"]["anomaly_severity"]
 
         severity_counts[severity] = severity_counts.get(severity, 0) + 1
         decision_source_counts[decision_source] = decision_source_counts.get(decision_source, 0) + 1
+        anomaly_severity_counts[anomaly_severity] = anomaly_severity_counts.get(anomaly_severity, 0) + 1
 
     summary = {
         "total_audit_records": int(len(audit_records)),
@@ -221,11 +279,20 @@ def build_audit_summary(df, audit_records):
         "decision_source_counts": {
             str(key): int(value) for key, value in decision_source_counts.items()
         },
+        "anomaly_severity_counts": {
+            str(key): int(value) for key, value in anomaly_severity_counts.items()
+        },
         "blocked_or_locked_transactions": int(
             df["final_action"].isin(["BLOCK", "LOCK"]).sum()
         ),
         "warned_transactions": int((df["final_action"] == "WARN").sum()),
-        "allowed_transactions": int((df["final_action"] == "ALLOW").sum())
+        "allowed_transactions": int((df["final_action"] == "ALLOW").sum()),
+        "autoencoder_anomaly_flags": int(
+            (df["autoencoder_anomaly_score"] >= 70).sum()
+        ),
+        "isolation_forest_anomaly_flags": int(
+            (df["isolation_forest_anomaly_score"] >= 75).sum()
+        )
     }
 
     return summary
@@ -270,6 +337,9 @@ def main():
     print()
     print("Decision source counts:")
     print(pd.Series([record["decision_source"] for record in audit_records]).value_counts())
+    print()
+    print("Anomaly severity counts:")
+    print(pd.Series([record["anomaly_decision"]["anomaly_severity"] for record in audit_records]).value_counts())
     print()
     print("Sample audit records:")
     for record in audit_records[:2]:

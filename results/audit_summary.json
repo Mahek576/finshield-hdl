@@ -1,25 +1,36 @@
 {
     "total_audit_records": 6000,
     "final_action_counts": {
-        "ALLOW": 4297,
-        "BLOCK": 768,
-        "LOCK": 473,
-        "WARN": 462
+        "ALLOW": 4278,
+        "LOCK": 746,
+        "BLOCK": 505,
+        "WARN": 471
     },
     "severity_counts": {
-        "LOW": 4297,
-        "CRITICAL": 473,
-        "HIGH": 768,
-        "MEDIUM": 462
+        "LOW": 4278,
+        "CRITICAL": 746,
+        "HIGH": 505,
+        "MEDIUM": 471
     },
     "decision_source_counts": {
-        "RULE_ENGINE_MONITORED": 1079,
-        "ML_AND_RULE_ENGINE": 1118,
-        "RULE_ENGINE": 325,
-        "ML_ENGINE": 246,
-        "NO_RISK_ENGINE_TRIGGERED": 3232
+        "RULE_ENGINE_MONITORED": 1072,
+        "ML_RULE_ANOMALY_ENGINE": 889,
+        "ML_AND_RULE_ENGINE": 229,
+        "RULE_ENGINE": 306,
+        "RULE_AND_ANOMALY_ENGINE": 19,
+        "ML_ENGINE": 194,
+        "ML_AND_ANOMALY_ENGINE": 52,
+        "ANOMALY_ENGINE": 21,
+        "NO_RISK_ENGINE_TRIGGERED": 3218
     },
-    "blocked_or_locked_transactions": 1241,
-    "warned_transactions": 462,
-    "allowed_transactions": 4297
+    "anomaly_severity_counts": {
+        "LOW": 5019,
+        "HIGH": 831,
+        "MEDIUM": 150
+    },
+    "blocked_or_locked_transactions": 1251,
+    "warned_transactions": 471,
+    "allowed_transactions": 4278,
+    "autoencoder_anomaly_flags": 735,
+    "isolation_forest_anomaly_flags": 935
 }

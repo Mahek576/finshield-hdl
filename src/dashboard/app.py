@@ -12,6 +12,8 @@ HARDWARE_PACKET_PATH = PROJECT_ROOT / "data" / "processed" / "hardware_risk_pack
 MODEL_METRICS_PATH = PROJECT_ROOT / "results" / "model_metrics.json"
 FEATURE_IMPORTANCE_PATH = PROJECT_ROOT / "results" / "feature_importance.csv"
 AUDIT_SUMMARY_PATH = PROJECT_ROOT / "results" / "audit_summary.json"
+MODEL_COMPARISON_PATH = PROJECT_ROOT / "results" / "model_comparison.csv"
+BEST_MODEL_SUMMARY_PATH = PROJECT_ROOT / "results" / "best_model_summary.json"
 
 
 st.set_page_config(
@@ -37,7 +39,9 @@ def load_data():
         HARDWARE_PACKET_PATH,
         MODEL_METRICS_PATH,
         FEATURE_IMPORTANCE_PATH,
-        AUDIT_SUMMARY_PATH
+        AUDIT_SUMMARY_PATH,
+        MODEL_COMPARISON_PATH,
+        BEST_MODEL_SUMMARY_PATH
     ]
 
     missing_files = [str(path) for path in required_files if not path.exists()]
@@ -45,11 +49,7 @@ def load_data():
     if missing_files:
         raise FileNotFoundError(
             "Missing required files. Run the full pipeline first:\n"
-            "python src/data/generate_transactions.py\n"
-            "python src/rules/risk_rules.py\n"
-            "python src/ml/train_model.py\n"
-            "python src/rules/final_decision_engine.py\n"
-            "python src/audit/audit_logger.py\n\n"
+            "python run_pipeline.py\n\n"
             f"Missing files: {missing_files}"
         )
 
@@ -57,9 +57,11 @@ def load_data():
     audit_df = pd.read_csv(AUDIT_VIEW_PATH)
     hardware_df = pd.read_csv(HARDWARE_PACKET_PATH)
     feature_importance_df = pd.read_csv(FEATURE_IMPORTANCE_PATH)
+    model_comparison_df = pd.read_csv(MODEL_COMPARISON_PATH)
 
     model_metrics = load_json(MODEL_METRICS_PATH)
     audit_summary = load_json(AUDIT_SUMMARY_PATH)
+    best_model_summary = load_json(BEST_MODEL_SUMMARY_PATH)
 
     final_df["timestamp"] = pd.to_datetime(final_df["timestamp"])
     audit_df["timestamp"] = pd.to_datetime(audit_df["timestamp"])
@@ -78,7 +80,16 @@ def load_data():
         how="left"
     )
 
-    return merged_df, audit_df, hardware_df, feature_importance_df, model_metrics, audit_summary
+    return (
+        merged_df,
+        audit_df,
+        hardware_df,
+        feature_importance_df,
+        model_comparison_df,
+        model_metrics,
+        audit_summary,
+        best_model_summary
+    )
 
 
 def metric_card(label, value, help_text=None):
@@ -92,12 +103,21 @@ def format_percentage(value):
 def main():
     st.title("🛡️ FinShield HDL")
     st.caption(
-        "AI-powered fintech risk engine with rule-based security enforcement, "
-        "audit traceability, and hardware-ready decision packets."
+        "AI-powered fintech risk engine with ML fraud scoring, anomaly benchmarking, "
+        "cybersecurity rules, audit traceability, and hardware-ready decision packets."
     )
 
     try:
-        df, audit_df, hardware_df, feature_importance_df, model_metrics, audit_summary = load_data()
+        (
+            df,
+            audit_df,
+            hardware_df,
+            feature_importance_df,
+            model_comparison_df,
+            model_metrics,
+            audit_summary,
+            best_model_summary
+        ) = load_data()
     except FileNotFoundError as error:
         st.error(str(error))
         st.stop()
@@ -235,7 +255,97 @@ def main():
 
     st.divider()
 
-    st.subheader("Model performance")
+    st.subheader("Model benchmarking")
+
+    best_metrics = best_model_summary.get("metrics", {})
+    best_model_name = best_model_summary.get("best_model_name", "NA")
+    best_model_type = best_model_summary.get("best_model_type", "NA")
+
+    st.caption(
+        "The benchmark compares supervised ML, neural-network, and anomaly-detection models "
+        "using fraud detection metrics and inference latency."
+    )
+
+    best_cols = st.columns(6)
+
+    with best_cols[0]:
+        metric_card("Best model", best_model_name)
+
+    with best_cols[1]:
+        metric_card("Model type", best_model_type)
+
+    with best_cols[2]:
+        metric_card("Precision", best_metrics.get("precision", "NA"))
+
+    with best_cols[3]:
+        metric_card("Recall", best_metrics.get("recall", "NA"))
+
+    with best_cols[4]:
+        metric_card("F1 score", best_metrics.get("f1_score", "NA"))
+
+    with best_cols[5]:
+        metric_card("PR-AUC", best_metrics.get("average_precision", "NA"))
+
+    latency_cols = st.columns(4)
+
+    with latency_cols[0]:
+        metric_card("False positives", best_metrics.get("false_positive", "NA"))
+
+    with latency_cols[1]:
+        metric_card("False negatives", best_metrics.get("false_negative", "NA"))
+
+    with latency_cols[2]:
+        metric_card(
+            "Latency / txn",
+            best_metrics.get("latency_ms_per_transaction", "NA")
+        )
+
+    with latency_cols[3]:
+        metric_card("Selection score", best_metrics.get("selection_score", "NA"))
+
+    comparison_display_columns = [
+        "model_name",
+        "model_type",
+        "accuracy",
+        "precision",
+        "recall",
+        "f1_score",
+        "roc_auc",
+        "average_precision",
+        "false_positive",
+        "false_negative",
+        "latency_ms_per_transaction",
+        "selection_score"
+    ]
+
+    available_comparison_columns = [
+        col for col in comparison_display_columns
+        if col in model_comparison_df.columns
+    ]
+
+    st.dataframe(
+        model_comparison_df[available_comparison_columns],
+        width="stretch"
+    )
+
+    benchmark_chart_df = model_comparison_df.set_index("model_name")[
+        [
+            "precision",
+            "recall",
+            "f1_score",
+            "average_precision",
+            "selection_score"
+        ]
+    ]
+
+    st.bar_chart(benchmark_chart_df)
+
+    with st.expander("View best model summary JSON"):
+        st.json(best_model_summary)
+
+    st.divider()
+
+    st.subheader("Primary model performance")
 
     metric_cols = st.columns(6)
 
@@ -257,7 +367,7 @@ def main():
     with metric_cols[5]:
         metric_card("Avg precision", model_metrics.get("average_precision", "NA"))
 
-    with st.expander("View confusion matrix and full model metrics"):
+    with st.expander("View confusion matrix and full primary model metrics"):
         st.json(model_metrics)
 
     st.subheader("Top feature importances")

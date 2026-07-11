@@ -758,3 +758,112 @@ Built **FinShield HDL**, an AI-powered fintech security engine that combines sup
 ## Short Project Summary
 
 FinShield HDL is a hybrid AI + HDL-oriented fintech risk engine that detects suspicious transactions using ML, deep anomaly detection, and cybersecurity rules, generates explainable audit logs, and prepares compact decision packets for low-latency Verilog-based enforcement.
+
+
+---
+
+## Hardware Enforcement Layer: Verilog HDL
+
+FinShield includes a Verilog HDL enforcement layer that converts software-generated risk signals into deterministic hardware security decisions.
+
+This layer represents the hardware-side enforcement path of the AI-powered fintech security system.
+
+```text
+Python ML + Rules + Anomaly Detection
+        |
+        v
+Hardware-Ready Risk Packet
+        |
+        v
+Verilog HDL Enforcement Layer
+        |
+        v
+Allow / Step-Up Authentication / Kill-Switch Block
+```
+
+---
+
+### Implemented HDL Modules
+
+| File                             | Purpose                                               |
+| -------------------------------- | ----------------------------------------------------- |
+| `hdl/daily_limit_checker.v`      | Detects single-transaction and daily-limit violations |
+| `hdl/velocity_checker.v`         | Detects excessive transaction frequency               |
+| `hdl/risk_threshold_checker.v`   | Converts risk score into warning and block flags      |
+| `hdl/account_takeover_checker.v` | Detects account takeover patterns                     |
+| `hdl/kill_switch_fsm.v`          | Implements the kill-switch state machine              |
+| `hdl/finshield_top.v`            | Integrates all HDL enforcement modules                |
+| `hdl/tb_finshield_top.v`         | Testbench for HDL behavioral verification             |
+
+---
+
+### Kill-Switch FSM
+
+The HDL kill-switch follows this security state flow:
+
+```text
+NORMAL -> WARNING -> LOCKED -> COOLDOWN -> NORMAL
+```
+
+| State      | Meaning                                                 |
+| ---------- | ------------------------------------------------------- |
+| `NORMAL`   | Transaction can proceed normally                        |
+| `WARNING`  | Risk is elevated and step-up authentication is required |
+| `LOCKED`   | Kill-switch is active and transaction is blocked        |
+| `COOLDOWN` | System is recovering after manual/security clearance    |
+
+---
+
+### Final HDL Decision Encoding
+
+| Code    | Decision                                 |
+| ------- | ---------------------------------------- |
+| `2'b00` | Allow transaction                        |
+| `2'b01` | Require review / step-up authentication  |
+| `2'b10` | Block transaction / activate kill-switch |
+
+---
+
+### Python to HDL Integration
+
+The Python risk engine produces risk-related signals such as transaction amount, transaction velocity, fraud score, model confidence, anomaly flags, and account takeover indicators.
+
+These are mapped into HDL inputs and enforced through Verilog logic.
+
+Relevant documentation:
+
+* [`docs/python_verilog_decision_mapping.md`](docs/python_verilog_decision_mapping.md)
+* [`docs/hdl_verification_status.md`](docs/hdl_verification_status.md)
+
+---
+
+### HDL Verification Status
+
+| Item                           | Status   |
+| ------------------------------ | -------- |
+| Verilog source modules         | Complete |
+| Verilog top-level integration  | Complete |
+| Verilog testbench              | Complete |
+| Python-to-HDL decision mapping | Complete |
+| Vivado behavioral simulation   | Pending  |
+| Waveform screenshot            | Pending  |
+| Synthesis                      | Pending  |
+| Utilization report             | Pending  |
+
+---
+
+### Current HDL Position
+
+The HDL implementation is source-complete and committed.
+
+Full Vivado simulation and synthesis proof is pending because Vivado is not currently installed on the development system.
+
+Once Vivado is available, the next verification steps are:
+
+1. Run behavioral simulation.
+2. Capture waveform screenshot.
+3. Run synthesis.
+4. Export utilization report.
+5. Compare Python final decisions with Verilog `final_decision`.
+
+This keeps the project honest while preserving the full AI + HDL fintech security-system vision.

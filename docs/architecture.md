@@ -1,18 +1,17 @@
-# FinShield HDL Architecture
+# FinShield Architecture
 
-FinShield HDL is an AI-powered fintech security architecture designed for transaction risk monitoring, fraud scoring, anomaly detection, cybersecurity rule enforcement, audit traceability, and hardware-ready decision making.
+FinShield is an AI-powered fintech security architecture designed for transaction risk monitoring, fraud scoring, anomaly detection, cybersecurity rule enforcement, audit traceability, and explainable and audit-ready risk decisioning.
 
 The project is built around one central idea:
 
 > A fintech security system should not stop at fraud prediction. It should produce explainable, enforceable, and low-latency security decisions.
 
-FinShield HDL combines supervised machine learning, anomaly detection, deterministic cybersecurity rules, audit logging, dashboard monitoring, and compact hardware-ready risk packets for a planned Verilog HDL kill-switch engine.
 
 ---
 
 ## Architecture Goal
 
-The goal of FinShield HDL is to simulate how a real fintech risk system could make fast security decisions for financial transactions.
+The goal of FinShield is to simulate how a real fintech risk system could make fast security decisions for financial transactions.
 
 A typical fraud detection project ends here:
 
@@ -20,7 +19,7 @@ A typical fraud detection project ends here:
 Dataset -> ML Model -> Accuracy
 ```
 
-FinShield HDL goes further:
+FinShield goes further:
 
 ```text
 Transaction Stream
@@ -32,8 +31,8 @@ Transaction Stream
 -> Hybrid ML + Rule + Anomaly Decision Engine
 -> Audit Logs
 -> Streamlit Dashboard
--> Hardware-Ready Risk Packets
--> Planned Verilog HDL Kill-Switch FSM
+-> Audit-Ready Risk Traces
+-> Planned LLM/RAG investigation layer Risk Escalation Workflow
 ```
 
 This makes the project closer to a real security platform than a standalone notebook.
@@ -42,13 +41,13 @@ This makes the project closer to a real security platform than a standalone note
 
 ## Core Layers
 
-FinShield HDL is organized into five major layers:
+FinShield is organized into five major layers:
 
 1. Data and transaction simulation layer
 2. Intelligence and anomaly detection layer
 3. Cybersecurity rule layer
 4. Decision, audit, and dashboard layer
-5. Hardware-ready HDL enforcement layer
+5. AI risk intelligence and analyst investigation layer
 
 ---
 
@@ -118,7 +117,6 @@ The rule engine produces:
 - rule_risk_score
 - rule_action
 - reason_codes
-- verilog_decision_packets.csv
 
 This layer is important because real fintech systems cannot rely only on model probabilities. Certain security events, such as account takeover signals or daily-limit breaches, require deterministic enforcement.
 
@@ -126,7 +124,6 @@ This layer is important because real fintech systems cannot rely only on model p
 
 ```text
 data/processed/rule_scored_transactions.csv
-data/processed/verilog_decision_packets.csv
 ```
 
 ---
@@ -282,7 +279,6 @@ Final action encoding:
 
 ```text
 data/processed/final_decision_transactions.csv
-data/processed/hardware_risk_packets.csv
 ```
 
 ---
@@ -364,79 +360,16 @@ The dashboard provides a monitoring interface for:
 - feature importance,
 - high-risk transaction review,
 - audit log inspection,
-- hardware-ready packet preview.
+- audit-ready decision trace preview.
 
 This gives the project a visual and operational layer instead of leaving the system as command-line output only.
 
 ---
 
-## 9. Hardware-Ready Risk Packets
-
-### File
-
-```text
-data/processed/hardware_risk_packets.csv
-```
-
-This file contains compact integer-based decision signals intended for future Verilog simulation.
-
-Example packet fields:
-
-- daily_limit_breach
-- velocity_spike
-- large_amount_anomaly
-- new_beneficiary_risk
-- account_takeover_signal
-- high_merchant_risk
-- failed_login_risk
-- rule_risk_score
-- ml_fraud_score
-- model_confidence
-- autoencoder_anomaly_score
-- isolation_forest_anomaly_score
-- final_risk_score
-- final_action_code
-
-These packets are designed to act as the bridge between the Python risk engine and the planned HDL kill-switch FSM.
-
----
-
-## 10. Planned Verilog HDL Enforcement Layer
-
-The Verilog HDL layer is planned as the low-latency hardware enforcement layer.
-
-Planned modules:
-
-- daily_limit_checker.v
-- velocity_checker.v
-- risk_threshold_checker.v
-- account_takeover_checker.v
-- kill_switch_fsm.v
-- finshield_top.v
-- tb_finshield_top.v
-
-The HDL layer will consume compact risk signals and produce hardware-style enforcement outputs.
-
-Planned FSM states:
-
-- NORMAL
-- WARNING
-- LOCKED
-
-Planned output actions:
-
-- ALLOW
-- WARN
-- BLOCK
-- LOCK
-
-The HDL phase will be implemented and verified in Vivado.
-
----
 
 ## Why This Architecture Is Strong
 
-FinShield HDL is not just a fraud classifier.
+FinShield is not just a fraud classifier.
 
 It is an end-to-end fintech security architecture that combines:
 
@@ -446,8 +379,8 @@ Supervised ML fraud scoring
 + deterministic cybersecurity rules
 + explainable audit logs
 + dashboard monitoring
-+ hardware-ready risk packets
-+ planned HDL kill-switch enforcement
++ audit-ready risk decision traces
 ```
 
 This architecture demonstrates system-level thinking across AI, fintech security, cybersecurity rules, explainability, and hardware-aware decision design.
+

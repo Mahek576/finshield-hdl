@@ -1,12 +1,12 @@
-# FinShield HDL
+# FinShield
 
-**FinShield HDL** is an AI-powered fintech security system that combines fraud detection, cybersecurity rules, anomaly detection, audit traceability, dashboard monitoring, and hardware-ready decision packets for future Verilog HDL-based low-latency enforcement.
+**FinShield** is an AI-powered fintech security system that combines fraud detection, cybersecurity rules, anomaly detection, audit traceability, dashboard monitoring, and audit-ready decision traces for future LLM/RAG investigation layer-based low-latency enforcement.
 
 The project is designed to answer one core question:
 
-> Can an AI-driven fintech risk engine make fast, explainable, and hardware-ready security decisions for suspicious financial transactions?
+> Can an AI-driven fintech risk engine make fast, explainable, and explainable security decisions for suspicious financial transactions?
 
-Most fraud detection projects stop at model prediction. FinShield HDL goes further by building an enforcement-oriented pipeline that produces final security actions such as `ALLOW`, `WARN`, `BLOCK`, and `LOCK`.
+Most fraud detection projects stop at model prediction. FinShield goes further by building an enforcement-oriented pipeline that produces final security actions such as `ALLOW`, `WARN`, `BLOCK`, and `LOCK`.
 
 ---
 
@@ -23,7 +23,7 @@ A real-world risk engine must combine:
 - operational dashboards,
 - and low-latency enforcement logic.
 
-FinShield HDL is built around that idea.
+FinShield is built around that idea.
 
 It combines **machine learning**, **deep anomaly detection**, **cybersecurity rule enforcement**, and **hardware-aware decision packets** into one end-to-end fintech security pipeline.
 
@@ -41,13 +41,12 @@ Transaction Stream
 -> Hybrid ML + Rule + Anomaly Decision Engine
 -> Audit Logs
 -> Streamlit Dashboard
--> Hardware-Ready Risk Packets
--> Planned Verilog HDL Kill-Switch FSM
+-> Audit-Ready Risk Traces
+-> Planned LLM/RAG investigation layer Risk Escalation Workflow
 ```
 
 The current implementation focuses on the Python, ML, anomaly detection, audit, dashboard, and hardware-packet layers.
 
-The Verilog/Vivado layer is planned as the next phase.
 
 ---
 
@@ -70,8 +69,8 @@ The Verilog/Vivado layer is planned as the next phase.
 - Explainable audit logs
 - Anomaly traceability in audit records
 - Streamlit dashboard for monitoring
-- Hardware-ready risk packet generation
-- Planned Verilog HDL kill-switch FSM
+- Audit-ready risk decision trace generation
+- Planned LLM/RAG investigation layer risk escalation workflow
 
 ---
 
@@ -152,13 +151,12 @@ The rule engine outputs:
 - `rule_risk_score`
 - `rule_action`
 - `reason_codes`
-- Verilog-oriented decision packets
+- audit-oriented decision traces
 
 **Outputs**
 
 ```text
 data/processed/rule_scored_transactions.csv
-data/processed/verilog_decision_packets.csv
 ```
 
 ---
@@ -271,7 +269,7 @@ Generated anomaly signals:
 
 These signals are integrated into the final decision engine and audit logs.
 
-This allows FinShield HDL to detect both known fraud patterns and unknown abnormal behavior.
+This allows FinShield to detect both known fraud patterns and unknown abnormal behavior.
 
 ---
 
@@ -308,7 +306,6 @@ The engine produces the final transaction decision.
 
 ```text
 data/processed/final_decision_transactions.csv
-data/processed/hardware_risk_packets.csv
 ```
 
 ---
@@ -377,14 +374,14 @@ The dashboard provides a monitoring interface for:
 - feature importance,
 - high-risk transaction review,
 - audit log inspection,
-- hardware-ready risk packet preview.
+- audit-ready risk decision trace preview.
 
 ---
 
 ## Project Structure
 
 ```text
-finshield-hdl/
+finshield/
 |
 +-- data/
 |   +-- raw/
@@ -394,9 +391,7 @@ finshield-hdl/
 +-- docs/
 |   +-- architecture.md
 |   +-- results.md
-|   +-- verilog_design.md
 |
-+-- hdl/
 |   +-- daily_limit_checker.v
 |   +-- velocity_checker.v
 |   +-- risk_threshold_checker.v
@@ -444,8 +439,8 @@ finshield-hdl/
 - scikit-learn
 - Streamlit
 - joblib
-- Verilog HDL
-- Vivado planned for HDL simulation and synthesis
+- LLM/RAG investigation layer
+- model monitoring and analyst-copilot validation planned for AI risk intelligence simulation and synthesis
 - Git/GitHub
 
 ---
@@ -641,78 +636,11 @@ Decision source distribution includes:
 
 ---
 
-## Hardware-Ready Risk Packets
-
-FinShield HDL generates compact decision packets for future HDL simulation.
-
-These packets include:
-
-- rule signals,
-- ML fraud score,
-- model confidence,
-- autoencoder anomaly score,
-- Isolation Forest anomaly score,
-- final risk score,
-- final action code.
-
-Output:
-
-```text
-data/processed/hardware_risk_packets.csv
-```
-
-These packets are designed to be consumed by a Verilog kill-switch FSM in the next phase.
-
----
-
-## Verilog HDL Plan
-
-The Verilog HDL layer will act as the low-latency hardware-oriented enforcement engine.
-
-Planned modules:
-
-- `daily_limit_checker.v`
-- `velocity_checker.v`
-- `risk_threshold_checker.v`
-- `account_takeover_checker.v`
-- `kill_switch_fsm.v`
-- `finshield_top.v`
-- `tb_finshield_top.v`
-
-Planned FSM states:
-
-- `NORMAL`
-- `WARNING`
-- `LOCKED`
-
-Planned FSM behavior:
-
-```text
-NORMAL  -> WARNING  when moderate risk appears
-NORMAL  -> LOCKED   when critical risk appears
-WARNING -> NORMAL   when risk clears
-WARNING -> LOCKED   when risk escalates
-LOCKED  -> NORMAL   only after admin reset
-```
-
-Vivado will be used later for:
-
-- behavioral simulation,
-- waveform viewing,
-- FSM verification,
-- synthesis,
-- resource utilization report.
-
----
 
 ## Future Work
 
-- Complete Verilog checker modules
-- Implement kill-switch FSM
-- Build Verilog testbench
-- Generate HDL simulation vectors from `hardware_risk_packets.csv`
-- Compare Python `final_action_code` with Verilog `action_code`
-- Add Vivado waveform screenshots
+- Implement risk escalation workflow
+- Add model monitoring and analyst-copilot validation waveform screenshots
 - Add synthesis and utilization report
 - Add dashboard screenshots to README
 - Add unit tests for the rule engine, final decision engine, and audit logger
@@ -733,15 +661,13 @@ Completed:
 - Explainable audit logging
 - Anomaly traceability in audit logs
 - Streamlit dashboard
-- Hardware-ready risk packet generation
+- Audit-ready risk decision trace generation
 - Architecture documentation
 - Results documentation
 - One-command pipeline runner
 
 Planned:
 
-- Vivado Verilog implementation
-- Python vs Verilog comparison
 - Waveform screenshots
 - Synthesis report
 - Dashboard screenshots
@@ -751,119 +677,12 @@ Planned:
 
 ## Resume Description
 
-Built **FinShield HDL**, an AI-powered fintech security engine that combines supervised fraud detection, anomaly detection, cybersecurity rules, audit traceability, dashboard monitoring, and hardware-ready risk packets for a planned Verilog HDL kill-switch enforcement layer.
 
 ---
 
 ## Short Project Summary
 
-FinShield HDL is a hybrid AI + HDL-oriented fintech risk engine that detects suspicious transactions using ML, deep anomaly detection, and cybersecurity rules, generates explainable audit logs, and prepares compact decision packets for low-latency Verilog-based enforcement.
+FinShield is a hybrid AI + AI risk intelligence-oriented fintech risk engine that detects suspicious transactions using ML, deep anomaly detection, and cybersecurity rules, generates explainable audit logs, and prepares compact decision packets for low-latency policy-grounded risk investigation.
 
 
----
 
-## Hardware Enforcement Layer: Verilog HDL
-
-FinShield includes a Verilog HDL enforcement layer that converts software-generated risk signals into deterministic hardware security decisions.
-
-This layer represents the hardware-side enforcement path of the AI-powered fintech security system.
-
-```text
-Python ML + Rules + Anomaly Detection
-        |
-        v
-Hardware-Ready Risk Packet
-        |
-        v
-Verilog HDL Enforcement Layer
-        |
-        v
-Allow / Step-Up Authentication / Kill-Switch Block
-```
-
----
-
-### Implemented HDL Modules
-
-| File                             | Purpose                                               |
-| -------------------------------- | ----------------------------------------------------- |
-| `hdl/daily_limit_checker.v`      | Detects single-transaction and daily-limit violations |
-| `hdl/velocity_checker.v`         | Detects excessive transaction frequency               |
-| `hdl/risk_threshold_checker.v`   | Converts risk score into warning and block flags      |
-| `hdl/account_takeover_checker.v` | Detects account takeover patterns                     |
-| `hdl/kill_switch_fsm.v`          | Implements the kill-switch state machine              |
-| `hdl/finshield_top.v`            | Integrates all HDL enforcement modules                |
-| `hdl/tb_finshield_top.v`         | Testbench for HDL behavioral verification             |
-
----
-
-### Kill-Switch FSM
-
-The HDL kill-switch follows this security state flow:
-
-```text
-NORMAL -> WARNING -> LOCKED -> COOLDOWN -> NORMAL
-```
-
-| State      | Meaning                                                 |
-| ---------- | ------------------------------------------------------- |
-| `NORMAL`   | Transaction can proceed normally                        |
-| `WARNING`  | Risk is elevated and step-up authentication is required |
-| `LOCKED`   | Kill-switch is active and transaction is blocked        |
-| `COOLDOWN` | System is recovering after manual/security clearance    |
-
----
-
-### Final HDL Decision Encoding
-
-| Code    | Decision                                 |
-| ------- | ---------------------------------------- |
-| `2'b00` | Allow transaction                        |
-| `2'b01` | Require review / step-up authentication  |
-| `2'b10` | Block transaction / activate kill-switch |
-
----
-
-### Python to HDL Integration
-
-The Python risk engine produces risk-related signals such as transaction amount, transaction velocity, fraud score, model confidence, anomaly flags, and account takeover indicators.
-
-These are mapped into HDL inputs and enforced through Verilog logic.
-
-Relevant documentation:
-
-* [`docs/python_verilog_decision_mapping.md`](docs/python_verilog_decision_mapping.md)
-* [`docs/hdl_verification_status.md`](docs/hdl_verification_status.md)
-
----
-
-### HDL Verification Status
-
-| Item                           | Status   |
-| ------------------------------ | -------- |
-| Verilog source modules         | Complete |
-| Verilog top-level integration  | Complete |
-| Verilog testbench              | Complete |
-| Python-to-HDL decision mapping | Complete |
-| Vivado behavioral simulation   | Pending  |
-| Waveform screenshot            | Pending  |
-| Synthesis                      | Pending  |
-| Utilization report             | Pending  |
-
----
-
-### Current HDL Position
-
-The HDL implementation is source-complete and committed.
-
-Full Vivado simulation and synthesis proof is pending because Vivado is not currently installed on the development system.
-
-Once Vivado is available, the next verification steps are:
-
-1. Run behavioral simulation.
-2. Capture waveform screenshot.
-3. Run synthesis.
-4. Export utilization report.
-5. Compare Python final decisions with Verilog `final_decision`.
-
-This keeps the project honest while preserving the full AI + HDL fintech security-system vision.

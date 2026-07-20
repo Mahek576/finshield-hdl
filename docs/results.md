@@ -1,6 +1,6 @@
-# FinShield HDL Results
+# FinShield Results
 
-This document summarizes the current performance and system behavior of FinShield HDL.
+This document summarizes the current performance and system behavior of FinShield.
 
 The current pipeline includes synthetic transaction generation, cybersecurity rule scoring, supervised ML fraud detection, model benchmarking, anomaly detection, anomaly-aware final decisions, audit logging, and dashboard-ready outputs.
 
@@ -126,7 +126,7 @@ These features are meaningful because they align with real fraud-risk signals: m
 
 ## Model Benchmarking Results
 
-FinShield HDL now includes a benchmarking layer that compares supervised ML, neural-network, and anomaly-detection models.
+FinShield now includes a benchmarking layer that compares supervised ML, neural-network, and anomaly-detection models.
 
 Models benchmarked:
 
@@ -168,7 +168,7 @@ In fraud detection, the best model should not be selected using accuracy alone. 
 
 ## Anomaly Detection Results
 
-FinShield HDL uses two anomaly-detection approaches:
+FinShield uses two anomaly-detection approaches:
 
 - Autoencoder Anomaly Detector
 - Isolation Forest
@@ -281,28 +281,6 @@ This makes every decision reviewable.
 
 ---
 
-## Hardware-Ready Packet Results
-
-The final decision engine generates compact hardware-ready packets.
-
-Output:
-
-```text
-data/processed/hardware_risk_packets.csv
-```
-
-The packets include:
-
-- rule signals,
-- ML fraud score,
-- model confidence,
-- anomaly scores,
-- final risk score,
-- final action code.
-
-These packets will be used as simulation vectors for the planned Verilog HDL kill-switch FSM.
-
----
 
 ## Generated Output Files
 
@@ -311,11 +289,9 @@ Main processed files:
 ```text
 data/sample_transactions.csv
 data/processed/rule_scored_transactions.csv
-data/processed/verilog_decision_packets.csv
 data/processed/ml_scored_transactions.csv
 data/processed/benchmark_scored_transactions.csv
 data/processed/final_decision_transactions.csv
-data/processed/hardware_risk_packets.csv
 data/processed/audit_log_view.csv
 ```
 
@@ -347,16 +323,14 @@ Completed:
 - Explainable audit logging
 - Anomaly traceability in audit records
 - Streamlit dashboard
-- Hardware-ready risk packet generation
+- Audit-ready risk decision trace generation
 - One-command pipeline runner
 
 Planned:
 
-- Verilog checker modules
-- Verilog kill-switch FSM
-- Vivado simulation
+- model monitoring and analyst-copilot validation simulation
 - Waveform screenshots
 - Synthesis/resource utilization report
-- Python vs Verilog decision comparison
 - Unit tests
 - Dashboard screenshots in README
+

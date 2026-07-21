@@ -796,3 +796,29 @@ Case workflow design
 Responsible analyst-assistant integration
 Testable software architecture
 
+---
+
+## API Service
+
+FinShield includes a FastAPI backend for transaction scoring and analyst-copilot access.
+
+Run the API:
+
+```powershell
+uvicorn src.api.main:app --reload
+
+Open the interactive API docs:
+
+http://127.0.0.1:8000/docs
+
+Main endpoints:
+
+EndpointPurpose
+GET /healthCheck API status
+POST /score-transactionScore transaction risk and return ALLOW, REVIEW, or BLOCK
+POST /copilot/policyAsk a policy-grounded question
+POST /copilot/explain-transactionExplain a transaction decision
+POST /copilot/investigate-caseGenerate an investigation summary
+
+See docs/api_service.md for examples.
+

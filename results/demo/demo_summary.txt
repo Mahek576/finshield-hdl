@@ -1,0 +1,12 @@
+demo_status: completed
+transaction_id: TXN-DEMO-001
+user_id: USER-DEMO-001
+final_decision: BLOCK
+fraud_probability: 0.91
+risk_score: 0.94
+case_id: CASE-58D59E670F
+case_priority: CRITICAL
+case_status: OPEN
+explanation_response_type: TRANSACTION_EXPLANATION
+investigation_response_type: CASE_INVESTIGATION
+policy_response_type: POLICY_ANSWER

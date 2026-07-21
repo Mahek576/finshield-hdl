@@ -162,12 +162,20 @@ def load_document_chunks(
     files = discover_text_files(paths)
     chunks: List[DocumentChunk] = []
 
+    project_root = Path.cwd().resolve()
+
     for file_path in files:
         text = file_path.read_text(encoding="utf-8", errors="ignore")
+
+        try:
+            display_source_path = str(file_path.resolve().relative_to(project_root))
+        except ValueError:
+            display_source_path = file_path.name
+
         chunks.extend(
             chunk_text(
                 text=text,
-                source_path=str(file_path),
+                source_path=display_source_path,
                 max_chars=max_chars,
                 overlap_chars=overlap_chars,
             )

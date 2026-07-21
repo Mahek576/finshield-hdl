@@ -1,0 +1,2 @@
+transaction_id,user_id,final_decision,fraud_probability,risk_score,model_confidence,anomaly_flag,velocity_violation,new_device,foreign_ip,account_takeover_pattern
+TXN-DEMO-001,USER-DEMO-001,BLOCK,0.91,0.94,0.82,True,True,True,True,True

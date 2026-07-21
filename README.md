@@ -822,3 +822,38 @@ POST /copilot/investigate-caseGenerate an investigation summary
 
 See docs/api_service.md for examples.
 
+---
+
+## Deployment and CI
+
+FinShield includes deployment-ready project structure.
+
+### Run Tests
+
+```powershell
+pytest
+Run Demo
+python .\scripts\run_finshield_demo.py
+Run API
+uvicorn src.api.main:app --reload
+
+API docs:
+
+http://127.0.0.1:8000/docs
+Run Dashboard
+streamlit run .\src\dashboard\app.py
+Run with Docker
+docker build -t finshield-api .
+docker run -p 8000:8000 finshield-api
+Run Project Readiness Check
+python .\scripts\project_readiness_check.py
+Continuous Integration
+
+GitHub Actions workflow:
+
+.github/workflows/tests.yml
+
+The workflow runs the test suite and final demo script on push and pull request.
+
+See docs/deployment_guide.md for full setup and deployment instructions.
+

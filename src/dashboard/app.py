@@ -566,3 +566,20 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# === FinShield Analyst Copilot Integration ===
+try:
+    from src.dashboard.copilot_tab import render_copilot_tab
+
+    st.divider()
+    with st.expander("FinShield Analyst Copilot", expanded=False):
+        render_copilot_tab()
+
+except Exception as copilot_error:
+    st.warning(
+        "FinShield Analyst Copilot could not be loaded. "
+        "Core dashboard functionality is still available."
+    )
+    st.caption(f"Copilot load detail: {copilot_error}")
+# === End FinShield Analyst Copilot Integration ===
+

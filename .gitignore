@@ -12,3 +12,5 @@ data/processed/*.tmp
 
 .env
 .DS_Store
+
+src/dashboard/app_backup_before_copilot.py

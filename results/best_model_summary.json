@@ -16,7 +16,7 @@
         "false_positive": 4,
         "false_negative": 3,
         "true_positive": 334,
-        "latency_ms_per_transaction": 0.015662,
+        "latency_ms_per_transaction": 0.013844,
         "selection_score": 0.9943
     }
 }

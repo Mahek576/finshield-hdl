@@ -12,7 +12,7 @@
         "false_positive": 4,
         "false_negative": 3,
         "true_positive": 334,
-        "latency_ms_per_transaction": 0.015662,
+        "latency_ms_per_transaction": 0.013844,
         "selection_score": 0.9943
     },
     {
@@ -28,7 +28,7 @@
         "false_positive": 9,
         "false_negative": 1,
         "true_positive": 336,
-        "latency_ms_per_transaction": 0.063219,
+        "latency_ms_per_transaction": 0.112366,
         "selection_score": 0.9943
     },
     {
@@ -44,7 +44,7 @@
         "false_positive": 20,
         "false_negative": 4,
         "true_positive": 333,
-        "latency_ms_per_transaction": 0.000656,
+        "latency_ms_per_transaction": 0.003257,
         "selection_score": 0.9851
     },
     {
@@ -60,7 +60,7 @@
         "false_positive": 13,
         "false_negative": 11,
         "true_positive": 326,
-        "latency_ms_per_transaction": 0.002821,
+        "latency_ms_per_transaction": 0.003954,
         "selection_score": 0.9795
     },
     {
@@ -76,7 +76,7 @@
         "false_positive": 62,
         "false_negative": 9,
         "true_positive": 328,
-        "latency_ms_per_transaction": 0.000817,
+        "latency_ms_per_transaction": 0.003653,
         "selection_score": 0.9518
     },
     {
@@ -92,7 +92,7 @@
         "false_positive": 63,
         "false_negative": 51,
         "true_positive": 286,
-        "latency_ms_per_transaction": 0.036592,
+        "latency_ms_per_transaction": 0.068044,
         "selection_score": 0.8785
     }
 ]

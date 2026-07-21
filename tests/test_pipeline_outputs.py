@@ -13,7 +13,7 @@ def test_required_pipeline_outputs_exist():
         PROJECT_ROOT / "data" / "processed" / "ml_scored_transactions.csv",
         PROJECT_ROOT / "data" / "processed" / "benchmark_scored_transactions.csv",
         PROJECT_ROOT / "data" / "processed" / "final_decision_transactions.csv",
-        PROJECT_ROOT / "data" / "processed" / "hardware_risk_packets.csv",
+        PROJECT_ROOT / "data" / "processed" / "risk_decision_traces.csv",
         PROJECT_ROOT / "data" / "processed" / "audit_log_view.csv",
         PROJECT_ROOT / "results" / "model_metrics.json",
         PROJECT_ROOT / "results" / "model_comparison.csv",
@@ -40,8 +40,8 @@ def test_final_decision_file_has_valid_action_codes():
     assert set(df["final_action_code"].unique()).issubset(valid_codes)
 
 
-def test_hardware_packet_contains_anomaly_fields():
-    path = PROJECT_ROOT / "data" / "processed" / "hardware_risk_packets.csv"
+def test_risk_decision_trace_contains_model_anomaly_fields():
+    path = PROJECT_ROOT / "data" / "processed" / "risk_decision_traces.csv"
 
     df = pd.read_csv(path)
 

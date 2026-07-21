@@ -1,3 +1,12 @@
+
+# Ensure project root is importable when Streamlit runs this file directly.
+import sys
+from pathlib import Path as _FinShieldPath
+
+_FINSHIELD_PROJECT_ROOT = _FinShieldPath(__file__).resolve().parents[2]
+if str(_FINSHIELD_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_FINSHIELD_PROJECT_ROOT))
+
 from pathlib import Path
 import json
 import pandas as pd
@@ -8,7 +17,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 FINAL_DECISIONS_PATH = PROJECT_ROOT / "data" / "processed" / "final_decision_transactions.csv"
 AUDIT_VIEW_PATH = PROJECT_ROOT / "data" / "processed" / "audit_log_view.csv"
-HARDWARE_PACKET_PATH = PROJECT_ROOT / "data" / "processed" / "hardware_risk_packets.csv"
+DECISION_TRACE_PATH = PROJECT_ROOT / "data" / "processed" / "risk_decision_traces.csv"
 
 MODEL_METRICS_PATH = PROJECT_ROOT / "results" / "model_metrics.json"
 FEATURE_IMPORTANCE_PATH = PROJECT_ROOT / "results" / "feature_importance.csv"
@@ -19,7 +28,7 @@ BEST_MODEL_SUMMARY_PATH = PROJECT_ROOT / "results" / "best_model_summary.json"
 
 
 st.set_page_config(
-    page_title="FinShield HDL Dashboard",
+    page_title="FinShield Dashboard",
     page_icon="🛡️",
     layout="wide"
 )
@@ -38,7 +47,7 @@ def load_data():
     required_files = [
         FINAL_DECISIONS_PATH,
         AUDIT_VIEW_PATH,
-        HARDWARE_PACKET_PATH,
+        DECISION_TRACE_PATH,
         MODEL_METRICS_PATH,
         FEATURE_IMPORTANCE_PATH,
         AUDIT_SUMMARY_PATH,
@@ -57,7 +66,7 @@ def load_data():
 
     final_df = pd.read_csv(FINAL_DECISIONS_PATH)
     audit_df = pd.read_csv(AUDIT_VIEW_PATH)
-    hardware_df = pd.read_csv(HARDWARE_PACKET_PATH)
+    hardware_df = pd.read_csv(DECISION_TRACE_PATH)
     feature_importance_df = pd.read_csv(FEATURE_IMPORTANCE_PATH)
     model_comparison_df = pd.read_csv(MODEL_COMPARISON_PATH)
 
@@ -107,12 +116,12 @@ def safe_columns(df, columns):
 
 
 def main():
-    st.title("🛡️ FinShield HDL")
+    st.title("🛡️ FinShield")
 
     st.caption(
         "AI-powered fintech risk engine with supervised ML, anomaly detection, "
         "cybersecurity rules, audit traceability, dashboard monitoring, and "
-        "hardware-ready decision packets for planned Verilog HDL enforcement."
+        "audit-ready risk decision traces for analyst review and monitoring."
     )
 
     try:
@@ -542,10 +551,10 @@ def main():
 
     st.divider()
 
-    st.subheader("Hardware-ready risk packets")
+    st.subheader("Audit-ready risk decision traces")
 
     st.caption(
-        "These compact packets are designed to be consumed by the Verilog kill-switch engine later."
+        "These compact records summarize model, rule, anomaly, and decision evidence for audit review and analyst investigation."
     )
 
     filtered_hardware_df = hardware_df[
@@ -582,4 +591,3 @@ except Exception as copilot_error:
     )
     st.caption(f"Copilot load detail: {copilot_error}")
 # === End FinShield Analyst Copilot Integration ===
-

@@ -8,7 +8,7 @@ ML_INPUT_PATH = PROJECT_ROOT / "data" / "processed" / "ml_scored_transactions.cs
 BENCHMARK_INPUT_PATH = PROJECT_ROOT / "data" / "processed" / "benchmark_scored_transactions.csv"
 
 OUTPUT_PATH = PROJECT_ROOT / "data" / "processed" / "final_decision_transactions.csv"
-HARDWARE_PACKET_PATH = PROJECT_ROOT / "data" / "processed" / "hardware_risk_packets.csv"
+DECISION_TRACE_PATH = PROJECT_ROOT / "data" / "processed" / "risk_decision_traces.csv"
 
 
 ACTION_TO_CODE = {
@@ -305,13 +305,13 @@ def main():
     packets_df = build_hardware_packets(final_df)
 
     final_df.to_csv(OUTPUT_PATH, index=False)
-    packets_df.to_csv(HARDWARE_PACKET_PATH, index=False)
+    packets_df.to_csv(DECISION_TRACE_PATH, index=False)
 
     print("Hybrid ML + anomaly + cybersecurity final decision engine completed successfully.")
     print(f"ML input path: {ML_INPUT_PATH}")
     print(f"Benchmark input path: {BENCHMARK_INPUT_PATH}")
     print(f"Final decision output path: {OUTPUT_PATH}")
-    print(f"Hardware packet output path: {HARDWARE_PACKET_PATH}")
+    print(f"Decision trace output path: {DECISION_TRACE_PATH}")
     print()
     print(f"Rows processed: {len(final_df)}")
     print()

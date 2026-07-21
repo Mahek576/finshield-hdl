@@ -66,7 +66,7 @@ def run_step(step_number, step):
 
 def main():
     print()
-    print("Starting FinShield HDL pipeline...")
+    print("Starting FinShield pipeline...")
     print(f"Project root: {PROJECT_ROOT}")
     print()
 
@@ -79,18 +79,18 @@ def main():
     total_time = round(pipeline_end - pipeline_start, 2)
 
     print("=" * 80)
-    print("FinShield HDL pipeline completed successfully.")
+    print("FinShield pipeline completed successfully.")
     print("=" * 80)
     print(f"Total runtime: {total_time} seconds")
     print()
     print("Generated outputs:")
     print("data/sample_transactions.csv")
     print("data/processed/rule_scored_transactions.csv")
-    print("data/processed/verilog_decision_packets.csv")
+    print("data/processed/risk_decision_traces.csv")
     print("data/processed/ml_scored_transactions.csv")
     print("data/processed/benchmark_scored_transactions.csv")
     print("data/processed/final_decision_transactions.csv")
-    print("data/processed/hardware_risk_packets.csv")
+    print("data/processed/risk_decision_traces.csv")
     print("data/processed/audit_log_view.csv")
     print("results/model_metrics.json")
     print("results/feature_importance.csv")

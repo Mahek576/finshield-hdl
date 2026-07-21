@@ -309,7 +309,7 @@ Each audit record includes:
 - decision source,
 - anomaly severity,
 - ground truth label,
-- hardware packet readiness.
+- audit-ready decision trace readiness.
 
 This makes the system reviewable and explainable.
 

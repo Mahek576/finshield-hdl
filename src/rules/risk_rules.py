@@ -6,7 +6,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 INPUT_PATH = PROJECT_ROOT / "data" / "sample_transactions.csv"
 OUTPUT_PATH = PROJECT_ROOT / "data" / "processed" / "rule_scored_transactions.csv"
-PACKET_OUTPUT_PATH = PROJECT_ROOT / "data" / "processed" / "verilog_decision_packets.csv"
+DECISION_TRACE_OUTPUT_PATH = PROJECT_ROOT / "data" / "processed" / "risk_decision_traces.csv"
 
 
 ACTION_TO_CODE = {
@@ -192,7 +192,7 @@ def decide_action(row):
 
     return "ALLOW"
 
-def build_verilog_decision_packets(df):
+def build_risk_decision_traces(df):
     packet_columns = [
         "transaction_id",
         "daily_limit_breach",
@@ -229,15 +229,15 @@ def main():
 
     df = load_transactions()
     scored_df = apply_rules(df)
-    packets_df = build_verilog_decision_packets(scored_df)
+    decision_traces_df = build_risk_decision_traces(scored_df)
 
     scored_df.to_csv(OUTPUT_PATH, index=False)
-    packets_df.to_csv(PACKET_OUTPUT_PATH, index=False)
+    decision_traces_df.to_csv(DECISION_TRACE_OUTPUT_PATH, index=False)
 
     print("Cybersecurity risk-rule engine completed successfully.")
     print(f"Input path: {INPUT_PATH}")
     print(f"Scored output path: {OUTPUT_PATH}")
-    print(f"Verilog packet output path: {PACKET_OUTPUT_PATH}")
+    print(f"Risk decision trace output path: {DECISION_TRACE_OUTPUT_PATH}")
     print()
     print(f"Rows processed: {len(scored_df)}")
     print()
@@ -256,7 +256,7 @@ def main():
     print(scored_df["reason_codes"].value_counts().head(10))
     print()
     print("Sample decision packets:")
-    print(packets_df.head(10))
+    print(decision_traces_df.head(10))
 
 
 if __name__ == "__main__":

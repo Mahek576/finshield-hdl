@@ -275,7 +275,7 @@ Each audit record includes:
 - severity,
 - decision source,
 - ground truth label,
-- hardware packet readiness.
+- audit-ready decision trace readiness.
 
 This makes every decision reviewable.
 

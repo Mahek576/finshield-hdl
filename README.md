@@ -335,7 +335,7 @@ Each audit record includes:
 - severity,
 - decision source,
 - ground truth label,
-- hardware packet readiness.
+- audit-ready decision trace readiness.
 
 Audit logs make the system explainable and reviewable.
 

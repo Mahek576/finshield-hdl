@@ -684,5 +684,115 @@ Planned:
 
 FinShield is a hybrid AI + AI risk intelligence-oriented fintech risk engine that detects suspicious transactions using ML, deep anomaly detection, and cybersecurity rules, generates explainable audit logs, and prepares compact decision packets for low-latency policy-grounded risk investigation.
 
+---
 
+## Final AI/ML Platform Architecture
+
+FinShield is an AI-powered fintech fraud and risk intelligence platform.
+
+It combines fraud detection, anomaly detection, cybersecurity rules, cost-sensitive decisioning, calibration, drift monitoring, audit traceability, case management, and a policy-grounded analyst copilot.
+
+```text
+Synthetic Transaction Data
+        |
+        v
+Feature Engineering
+        |
+        v
+Cybersecurity Rule Engine
+        |
+        v
+Supervised Fraud Detection
+        |
+        v
+Anomaly Detection
+        |
+        v
+Cost-Sensitive Decision Engine
+        |
+        v
+Audit Logs + Case Management
+        |
+        v
+Model Calibration + Monitoring
+        |
+        v
+Policy-Grounded Analyst Copilot
+        |
+        v
+Dashboard / Reports / Investigation Workflow
+Core Capabilities
+LayerCapability
+Data LayerSynthetic transaction generation and feature preparation
+Risk LayerCybersecurity rules and fraud indicators
+ML LayerSupervised fraud detection and model benchmarking
+Anomaly LayerIsolation Forest and autoencoder-based anomaly detection
+Decision LayerCost-sensitive ALLOW, REVIEW, BLOCK decisioning
+Calibration LayerProbability reliability evaluation using calibration metrics
+Monitoring LayerNumeric, categorical, and decision drift detection
+Audit LayerDecision traceability and explainable audit records
+Case LayerFraud case creation, prioritization, and report generation
+Copilot LayerPolicy-grounded explanations, investigation summaries, and safe analyst support
+Analyst Copilot
+
+FinShield includes an offline-first analyst copilot layer.
+
+The copilot can:
+
+Answer policy questions
+Explain transaction decisions
+Summarize case evidence
+Generate analyst notes
+Support fraud investigation workflows
+
+The copilot cannot:
+
+Override decisions
+Approve blocked transactions
+Delete audit records
+Invent policy
+Act as the final fraud authority
+Demo Flow
+1. Run the FinShield pipeline
+2. Generate or load transaction data
+3. Score fraud probability
+4. Detect anomalies
+5. Apply rule-based risk checks
+6. Generate ALLOW / REVIEW / BLOCK decisions
+7. Create audit logs
+8. Create fraud cases
+9. Run calibration and monitoring checks
+10. Ask the analyst copilot:
+    - Why was this transaction blocked?
+    - What does REVIEW mean?
+    - Investigate this suspicious case.
+11. Export or view investigation reports
+Documentation
+DocumentPurpose
+docs/model_card.mdModel purpose, limitations, evaluation, and safe-use boundaries
+docs/final_project_report.mdComplete project report and architecture explanation
+docs/risk_policy.mdDecision policy for ALLOW, REVIEW, and BLOCK
+docs/fraud_playbook.mdAnalyst investigation workflow
+docs/audit_policy.mdAudit trace requirements
+docs/cost_sensitive_decisioning.mdBusiness-aware risk decisioning
+docs/model_calibration.mdProbability calibration methodology
+docs/model_monitoring.mdDrift detection and monitoring
+docs/case_management.mdFraud case workflow
+docs/explanation_agent.mdTransaction explanation layer
+docs/investigation_agent.mdFraud investigation agent
+docs/copilot_service.mdAnalyst copilot service interface
+Final Project Positioning
+
+FinShield is designed as a complete AI/ML risk intelligence project, not just a fraud classifier.
+
+It demonstrates:
+
+Applied machine learning
+Risk decision engineering
+Explainability
+Model monitoring
+Auditability
+Case workflow design
+Responsible analyst-assistant integration
+Testable software architecture
 

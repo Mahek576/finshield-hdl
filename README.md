@@ -1,3 +1,5 @@
+
+
 # FinShield
 
 **FinShield** is an AI-powered fintech security system that combines fraud detection, cybersecurity rules, anomaly detection, audit traceability, dashboard monitoring, and audit-ready decision traces for future LLM/RAG investigation layer-based low-latency enforcement.
@@ -857,3 +859,8 @@ The workflow runs the test suite and final demo script on push and pull request.
 
 See docs/deployment_guide.md for full setup and deployment instructions.
 
+## Demo Videos
+
+🎥 [Watch / Download FinShield Demo Videos](https://github.com/Mahek576/finshield-ai-risk-platform/releases/tag/v1.0-demo)
+
+The demo videos show the complete FinShield workflow: test suite, one-command demo, FastAPI backend, Streamlit dashboard, policy-grounded analyst copilot, and fraud investigation reports.
